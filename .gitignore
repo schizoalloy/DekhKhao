@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+.env*.local
+.vercel
+.DS_Store
+
+# raw, unprocessed asset sources (see src/content/assets.manifest.json for where each came from)
+assets-src/
+
+# local AI-assistant tooling, not part of the site
+.claude/
+.agents/
+skills-lock.json

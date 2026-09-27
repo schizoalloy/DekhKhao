@@ -1,0 +1,65 @@
+{
+  "$comment": "Single source of truth for every photo, texture, 3D model and render on the site. Scripts read this to fetch and process assets; the site reads it through src/content/assets.ts. PROTOTYPE: third-party assets below must be replaced with owned/licensed restaurant assets before public launch.",
+  "photos": {},
+  "textures": {
+    "table": {
+      "file": "textures/table-wood.jpg",
+      "source": "textures/dark_wood_diff_4k.jpg",
+      "credit": {
+        "title": "Dark Wood",
+        "author": "Poly Haven",
+        "license": "CC0",
+        "url": "https://polyhaven.com/a/dark_wood"
+      }
+    },
+    "environment": {
+      "file": "env/comfy_cafe_1k.hdr",
+      "source": "textures/comfy_cafe_1k.hdr",
+      "credit": {
+        "title": "Comfy Café (HDRI)",
+        "author": "Poly Haven",
+        "license": "CC0",
+        "url": "https://polyhaven.com/a/comfy_cafe"
+      }
+    }
+  },
+  "models": {
+    "pizza": {
+      "$comment": "Photogrammetry scan measured 29.4 cm across. Normalised to exactly the menu size so the AR view is true to size.",
+      "source": "models/pizza-scan/raw.gltf",
+      "file": "models/pizza-12in.glb",
+      "realSize": {
+        "dimension": "diameter",
+        "value": 12,
+        "unit": "in"
+      },
+      "label": "Pepperoni pizza, 12-inch",
+      "credit": {
+        "title": "Pepperoni pizza (photogrammetry scan)",
+        "author": "Polycam community capture",
+        "license": "Prototype use only — replace before launch",
+        "url": "https://poly.cam/3d-models/food"
+      }
+    }
+  },
+  "renders": {
+    "pizzaTop": {
+      "model": "pizza",
+      "file": "renders/pizza-top.webp",
+      "orbit": "0deg 0deg auto",
+      "size": 1400
+    },
+    "pizzaTilt": {
+      "model": "pizza",
+      "file": "renders/pizza-tilt.webp",
+      "orbit": "0deg 58deg auto",
+      "size": 1400
+    },
+    "pizzaLow": {
+      "model": "pizza",
+      "file": "renders/pizza-low.webp",
+      "orbit": "20deg 72deg auto",
+      "size": 1400
+    }
+  }
+}

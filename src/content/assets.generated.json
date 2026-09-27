@@ -1,0 +1,23 @@
+{
+  "textures.table": {
+    "width": 2048,
+    "height": 2048
+  },
+  "models.pizza": {
+    "widthCm": 30.48,
+    "heightCm": 3.83,
+    "depthCm": 29.49
+  },
+  "renders.pizzaTop": {
+    "width": 1369,
+    "height": 1330
+  },
+  "renders.pizzaTilt": {
+    "width": 1390,
+    "height": 793
+  },
+  "renders.pizzaLow": {
+    "width": 1400,
+    "height": 536
+  }
+}
