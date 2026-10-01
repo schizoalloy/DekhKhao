@@ -2,7 +2,7 @@
   "rules": [
     {
       "allowed": {
-        "origins": ["http://localhost:3000", "https://dekh-khao.vercel.app"],
+        "origins": ["http://localhost:3000", "https://dekh-khao.vercel.app", "https://dekh-khao-test.vercel.app"],
         "methods": ["GET", "HEAD"]
       },
       "maxAgeSeconds": 86400
