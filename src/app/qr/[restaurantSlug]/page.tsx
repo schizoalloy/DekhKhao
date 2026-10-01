@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import QRCode from "qrcode";
 import { getRestaurant, listRestaurants } from "@/catalog/data";
-import { appUrl, catalogUrl } from "@/config/app";
+import { catalogUrl } from "@/config/app";
 import { siteConfig } from "@/config/site";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { PrintButton } from "./PrintButton";
@@ -18,7 +18,7 @@ export async function generateStaticParams() {
   return (await listRestaurants()).map((r) => ({ restaurantSlug: r.slug }));
 }
 
-const isLocal = (url: string) => /^https?:\/\/(localhost|127\.|10\.|192\.168\.)/.test(url);
+const isLocal = (url: string) => /^https?:\/\/(([^/]*\.)?localhost|127\.|10\.|192\.168\.)/.test(url);
 
 /**
  * Print-ready table card for a restaurant. The QR code is static: it encodes the
@@ -34,7 +34,7 @@ export default async function QrPage({ params }: Params) {
     errorCorrectionLevel: "M",
     color: { dark: "#1b1714", light: "#ffffff" },
   });
-  const dev = isLocal(appUrl);
+  const dev = isLocal(url);
 
   return (
     <main className="min-h-[100dvh] bg-paper px-4 py-10 print:bg-white print:p-0">
@@ -57,8 +57,8 @@ export default async function QrPage({ params }: Params) {
         <div className="mt-8 space-y-4 text-sm print:hidden">
           {dev && (
             <p className="rounded-2xl border border-chilli/40 bg-chilli/10 p-4 text-chilli-deep" role="alert">
-              Development build: this code points at <strong>{appUrl}</strong> and only works on this computer. Deploy, or set
-              NEXT_PUBLIC_APP_URL, before printing.
+              Development build: this code points at <strong>{url}</strong> and only works on this computer. Use the
+              code from the live site for printing.
             </p>
           )}
           <div>

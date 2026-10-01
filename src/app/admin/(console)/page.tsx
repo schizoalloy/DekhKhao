@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createRestaurant } from "@/app/admin/actions/menu";
 import { ActionForm, SubmitButton } from "@/components/admin/ActionForm";
 import { ui } from "@/components/admin/styles";
+import { catalogLabel, rootDomain } from "@/config/app";
 import { requireAdmin } from "@/lib/admin/auth";
 
 export const metadata: Metadata = { title: "Restaurants" };
@@ -35,7 +36,7 @@ export default async function AdminHome() {
                   <Link href={`/admin/restaurants/${r.id}`} className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-white">
                     <span className="min-w-0">
                       <span className="block truncate font-medium">{r.name}</span>
-                      <span className="block font-mono text-xs text-muted">/r/{r.slug}</span>
+                      <span className="block font-mono text-xs text-muted">{catalogLabel(r.slug)}</span>
                     </span>
                     {p ? (
                       <span className={`${ui.badge} bg-leaf/10 text-leaf`}>Live · v{String(p.version)}</span>
@@ -63,22 +64,24 @@ export default async function AdminHome() {
           </div>
           <div>
             <label htmlFor="slug" className={ui.label}>
-              Menu address
+              {rootDomain ? "Website address" : "Menu address"}
             </label>
-            <div className="mt-1.5 flex items-center rounded-xl border border-line bg-white pl-3 focus-within:border-ink">
-              <span className="font-mono text-sm text-muted">/r/</span>
+            <div className="mt-1.5 flex items-center rounded-xl border border-line bg-white px-3 focus-within:border-ink">
+              {!rootDomain && <span className="font-mono text-sm text-muted">/r/</span>}
               <input
                 id="slug"
                 name="slug"
                 maxLength={60}
                 pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                placeholder="from the name"
+                placeholder={rootDomain ? "pizzahut" : "from the name"}
                 className="min-w-0 flex-1 rounded-xl bg-transparent px-1 py-2 font-mono text-sm outline-none"
                 aria-describedby="slug-hint"
               />
+              {rootDomain && <span className="font-mono text-sm text-muted">.{rootDomain}</span>}
             </div>
             <p id="slug-hint" className={ui.hint}>
-              Lowercase letters, numbers and hyphens. Printed on QR codes, so it can&apos;t change later.
+              Lowercase letters, numbers and hyphens; leave empty to use the name. Printed on QR codes, so it
+              can&apos;t change later.
             </p>
           </div>
           <SubmitButton>Create restaurant</SubmitButton>

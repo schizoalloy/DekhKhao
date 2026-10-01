@@ -2,14 +2,17 @@
 
 import { ArrowLeft } from "@phosphor-icons/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
+import { catalogPath } from "@/config/app";
 
 /**
- * Shown for an item that isn't on this restaurant's menu (/r/<slug>/<unknown>).
+ * Shown for an item that isn't on this restaurant's menu (/r/<slug>/<unknown>, or
+ * <slug>.<root>/<unknown> on a restaurant subdomain).
  * Restaurants that don't exist are handled by src/app/r/not-found.tsx.
  */
 export default function ItemNotFound() {
-  const menuHref = usePathname().split("/").slice(0, 3).join("/") || "/";
+  const { restaurantSlug } = useParams<{ restaurantSlug?: string }>();
+  const menuHref = restaurantSlug ? catalogPath(restaurantSlug) : "/";
   return (
     <main id="main" className="mx-auto grid min-h-[80dvh] max-w-md place-items-center px-6 text-center">
       <div>

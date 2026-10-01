@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Restaurant } from "@/catalog/types";
+import { catalogPath, marketingHref } from "@/config/app";
 import { siteConfig } from "@/config/site";
 import { LogoMark } from "@/components/ui/LogoMark";
 
@@ -28,13 +29,13 @@ export function MenuHeader({ restaurant, back }: { restaurant: Restaurant; back?
     <header className="sticky top-0 z-30 border-b border-m-line bg-m-bg/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
         {back ?? (
-          <Link href={`/r/${restaurant.slug}`} className="flex min-h-11 min-w-0 items-center gap-2.5">
+          <Link href={catalogPath(restaurant.slug)} className="flex min-h-11 min-w-0 items-center gap-2.5">
             <RestaurantMark restaurant={restaurant} size={30} />
             <span className="truncate font-display text-[1.05rem] font-semibold tracking-[-0.02em]">{restaurant.name}</span>
           </Link>
         )}
         <a
-          href="/"
+          href={marketingHref("/")}
           className="flex min-h-11 shrink-0 items-center gap-1.5 text-xs text-m-muted transition-colors hover:text-m-text"
           aria-label={`3D menu by ${siteConfig.name}. Learn more`}
         >
@@ -56,10 +57,10 @@ export function MenuFooter() {
           <span className="block text-xs">{siteConfig.tagline}</span>
         </p>
         <nav aria-label="About this menu" className="flex gap-5 text-xs">
-          <a href="/" className="inline-flex min-h-11 items-center underline decoration-m-line underline-offset-4 hover:text-m-text">
+          <a href={marketingHref("/")} className="inline-flex min-h-11 items-center underline decoration-m-line underline-offset-4 hover:text-m-text">
             About {siteConfig.name}
           </a>
-          <a href="/privacy" className="inline-flex min-h-11 items-center underline decoration-m-line underline-offset-4 hover:text-m-text">
+          <a href={marketingHref("/privacy")} className="inline-flex min-h-11 items-center underline decoration-m-line underline-offset-4 hover:text-m-text">
             Privacy
           </a>
         </nav>

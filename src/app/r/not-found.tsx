@@ -1,3 +1,4 @@
+import { marketingHref } from "@/config/app";
 import { siteConfig } from "@/config/site";
 import { LogoMark } from "@/components/ui/LogoMark";
 
@@ -13,7 +14,7 @@ export default function RestaurantNotFound() {
             The link or QR code may be out of date. Ask a member of staff for the restaurant’s current menu.
           </p>
           <a
-            href="/"
+            href={marketingHref("/")}
             className="mt-8 inline-flex min-h-12 items-center rounded-full border border-m-line px-6 text-sm font-medium hover:border-current"
           >
             What is {siteConfig.name}?

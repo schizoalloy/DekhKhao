@@ -91,6 +91,24 @@ await expectErr("anon cannot call private helpers", () => as("anon", "select pri
 console.log("\n-- creating a restaurant --");
 await expectErr("outsider cannot create a restaurant", () => as("outsider", "insert into public.restaurants (slug, name) values ('x-grill', 'X')"), /row-level security/);
 await expectErr("slug 'demo' is reserved", () => as("admin", "insert into public.restaurants (slug, name) values ('demo', 'D')"), /restaurants_slug_reserved/);
+{
+  // Restaurant slugs are subdomains; the database must reserve everything src/lib/hosts.ts does.
+  const hosts = fs.readFileSync(path.resolve(import.meta.dirname, "../../src/lib/hosts.ts"), "utf8");
+  const list = hosts.slice(hosts.indexOf("RESERVED_SUBDOMAINS"), hosts.indexOf("]);"));
+  const reserved = [...list.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]);
+  const accepted = [];
+  for (const slug of reserved) {
+    try {
+      await as("admin", "insert into public.restaurants (slug, name) values ($1, 'x')", [slug]);
+      accepted.push(slug);
+    } catch (e) {
+      if (!/restaurants_slug_reserved/.test(e.message)) accepted.push(`${slug} (${e.message})`);
+    }
+  }
+  accepted.length || reserved.length < 20
+    ? (fail++, console.log(`FAIL  reserved subdomains match src/lib/hosts.ts\n      not rejected: ${accepted.join(", ") || "(list not found)"}`))
+    : (pass++, console.log(`PASS  all ${reserved.length} reserved subdomains in src/lib/hosts.ts are rejected`));
+}
 await expectErr("bad slug rejected", () => as("admin", "insert into public.restaurants (slug, name) values ('Bad Slug', 'D')"), /restaurants_slug_format/);
 const A = (await expectOk("admin creates restaurant A", () => as("admin", "insert into public.restaurants (slug, name, accent) values ('karachi-grill', 'Karachi Grill', '#c2410c') returning id, created_by"), (r) => r.rows[0].created_by === U.admin))?.rows[0].id;
 const B = (await expectOk("admin creates restaurant B", () => as("admin", "insert into public.restaurants (slug, name) values ('lahore-bites', 'Lahore Bites') returning id")))?.rows[0].id;

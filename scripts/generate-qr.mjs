@@ -2,9 +2,11 @@
  * Generates the static QR code for a restaurant's catalog. Everything is generated
  * locally with the `qrcode` package; no third-party or "dynamic" QR service is involved.
  *
- *   npm run qr -- <restaurant-slug> --base https://your-domain.com
+ *   npm run qr -- <restaurant-slug> --root dekhkhao.com          https://<slug>.dekhkhao.com
+ *   npm run qr -- <restaurant-slug> --base https://your-domain.com    https://your-domain.com/r/<slug>
  *
- * Base URL, first one found wins (same order as src/config/app.ts):
+ * Subdomain mode (as in src/config/app.ts) when --root or NEXT_PUBLIC_ROOT_DOMAIN is set and --base isn't.
+ * Otherwise the base URL, first one found wins:
  *   --base <url>  →  NEXT_PUBLIC_APP_URL  →  NEXT_PUBLIC_SITE_URL  (env, .env.production.local, .env.local, .env)
  * With none of those, it makes a DEVELOPMENT code for this computer's local network
  * address so a phone on the same Wi-Fi can open `npm run dev`. Development codes are
@@ -56,7 +58,14 @@ function lanAddress() {
   return "localhost";
 }
 
+// Subdomain mode (same rule as src/config/app.ts): https://<slug>.<root>, unless --base forces a path URL.
+const rootFlag = argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : undefined;
+const rootDomain = baseFlag
+  ? null
+  : (rootFlag || process.env.NEXT_PUBLIC_ROOT_DOMAIN || fromEnvFiles("NEXT_PUBLIC_ROOT_DOMAIN"))?.trim().toLowerCase().replace(/\/+$/, "") || null;
+
 let base = configured ? configured.replace(/\/+$/, "") : `http://${lanAddress()}:${process.env.PORT ?? 3000}`;
+if (rootDomain) base = `${/^(localhost|127\.)/.test(rootDomain) ? "http" : "https"}://${slug}.${rootDomain}`;
 try {
   base = new URL(base).origin;
 } catch {
@@ -65,14 +74,15 @@ try {
 }
 const host = new URL(base).hostname;
 const isDev =
-  !configured ||
+  (!configured && !rootDomain) ||
   host === "localhost" ||
+  host.endsWith(".localhost") ||
   /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(host) ||
   host.endsWith(".local");
 if (!isDev && !base.startsWith("https://"))
   console.warn("! Production QR codes should use https (AR on Android needs a secure page).");
 
-const url = `${base}/r/${slug}`;
+const url = rootDomain ? base : `${base}/r/${slug}`;
 const name = `${slug}-catalog${isDev ? ".dev" : ""}`;
 const outDir = path.join(root, "public/qr");
 await fs.mkdir(outDir, { recursive: true });
@@ -90,7 +100,7 @@ await fs.writeFile(
     `Generated:   ${new Date().toISOString()}`,
     "",
     "Regenerate after the domain changes:",
-    `  npm run qr -- ${slug} --base https://your-domain.com`,
+    rootDomain ? `  npm run qr -- ${slug} --root ${rootDomain}` : `  npm run qr -- ${slug} --base https://your-domain.com`,
     "",
   ].join("\n"),
 );

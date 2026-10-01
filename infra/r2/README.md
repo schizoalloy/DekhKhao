@@ -23,8 +23,10 @@ npx wrangler r2 bucket cors set dekhkhao-public --file infra/r2/cors-public.json
 npx wrangler r2 bucket cors list dekhkhao-assets
 ```
 
-Add an origin to both files and re-run these when the app gets a new domain. Vercel preview URLs aren't listed, so
-uploads only work from `localhost:3000` and the production domain.
+The public bucket allows `https://*.dekhkhao.com` (every restaurant subdomain, matched strictly: `x.dekhkhao.com.evil.com`
+is refused) and `http://*.localhost:3000` for local subdomain testing. The private bucket only allows the admin's
+origins, because uploads and previews happen there. Re-run these after adding an origin. Vercel's per-deployment
+preview URLs aren't listed, so uploads only work from the addresses above.
 
 ## Recreating from scratch
 

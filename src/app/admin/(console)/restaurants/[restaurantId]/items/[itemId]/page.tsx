@@ -9,6 +9,7 @@ import type { CatalogItem } from "@/catalog/types";
 import { ActionForm, SubmitButton } from "@/components/admin/ActionForm";
 import { FileUpload } from "@/components/admin/FileUpload";
 import { ui } from "@/components/admin/styles";
+import { catalogLabel } from "@/config/app";
 import { ItemExperience } from "@/components/catalog/ItemExperience";
 import { requireAdmin } from "@/lib/admin/auth";
 import type { FileSlot } from "@/lib/admin/file-rules";
@@ -83,7 +84,7 @@ export default async function ItemAdminPage({ params }: Params) {
       </Link>
       <h1 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em]">{i.name}</h1>
       <p className="mt-1 font-mono text-sm text-muted">
-        /r/{r.slug}/{i.slug}
+        {catalogLabel(r.slug).replace(/\/$/, "")}/{i.slug}
       </p>
       <p className="mt-3 flex items-start gap-2 text-sm text-muted">
         <Info size={18} className="mt-0.5 shrink-0" aria-hidden />

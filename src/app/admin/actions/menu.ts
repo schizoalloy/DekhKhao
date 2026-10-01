@@ -6,6 +6,11 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/admin/auth";
 import { friendlyDbError, slugify, type ActionState } from "@/lib/admin/action-state";
 import { removeOrphanFiles } from "@/lib/admin/files";
+import { catalogLabel } from "@/config/app";
+import { RESERVED_SUBDOMAINS } from "@/lib/hosts";
+
+/** Restaurant addresses that are taken by the platform (the database enforces the same list). */
+const RESERVED = new Set([...RESERVED_SUBDOMAINS, "demo"]);
 
 /**
  * Restaurant, category and item edits. Every action re-checks the admin session, validates its
@@ -53,8 +58,10 @@ export async function createRestaurant(_prev: ActionState, formData: FormData): 
     return {
       ok: false,
       error: friendlyDbError(error, {
-        unique: `/r/${parsed.data.slug} is already taken. Pick another address.`,
-        invalid: parsed.data.slug === "demo" ? "“demo” is reserved for the built-in demo menu." : undefined,
+        unique: `${catalogLabel(parsed.data.slug)} is already taken. Pick another address.`,
+        invalid: RESERVED.has(parsed.data.slug)
+          ? `“${parsed.data.slug}” is reserved. Pick another address.`
+          : undefined,
       }),
     };
   refreshAdmin();
@@ -141,7 +148,7 @@ export async function createItem(_prev: ActionState, formData: FormData): Promis
     .safeParse(Object.fromEntries(formData));
   if (!parsed.success) return invalid(parsed.error);
 
-  // Item addresses are /r/<restaurant>/<item-slug>; add a number if the name is already used.
+  // An item's address ends in /<item-slug>; add a number if the name is already used.
   const base = slugify(parsed.data.name, 76) || "item";
   for (let n = 1; n <= 20; n++) {
     const slug = n === 1 ? base : `${base}-${n}`;

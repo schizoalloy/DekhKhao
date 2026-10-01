@@ -2,7 +2,13 @@
   "rules": [
     {
       "allowed": {
-        "origins": ["http://localhost:3000", "https://dekh-khao.vercel.app", "https://dekh-khao-test.vercel.app"],
+        "origins": [
+          "http://localhost:3000",
+          "http://admin.localhost:3000",
+          "https://admin.dekhkhao.com",
+          "https://dekh-khao.vercel.app",
+          "https://dekh-khao-test.vercel.app"
+        ],
         "methods": ["PUT", "GET", "HEAD"],
         "headers": ["content-type"]
       },
