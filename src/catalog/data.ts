@@ -1,7 +1,12 @@
 /**
- * Catalog data access. Pages only talk to these async functions, so swapping the
- * JSON registry for a database later means changing this file, not the UI.
+ * Catalog data access. Pages only talk to these async functions.
+ *
+ * Two sources, checked in this order:
+ *   1. The JSON registry in ./restaurants (the demo and the Luffy test item), built into the app.
+ *   2. Menus published from the admin console (./published.ts), rendered on first visit and
+ *      cached until the next publish. The database reserves JSON slugs such as "demo".
  */
+import { getPublishedRestaurant } from "./published";
 import { restaurantRecords } from "./restaurants";
 import type { CatalogItem, Restaurant } from "./types";
 
@@ -39,12 +44,13 @@ function validate(records: Restaurant[]): Restaurant[] {
 
 const restaurants = validate(restaurantRecords);
 
+/** Restaurants built into the app, prerendered at build time. Published menus aren't listed here. */
 export async function listRestaurants(): Promise<Restaurant[]> {
   return restaurants;
 }
 
 export async function getRestaurant(slug: string): Promise<Restaurant | null> {
-  return restaurants.find((r) => r.slug === slug) ?? null;
+  return restaurants.find((r) => r.slug === slug) ?? (await getPublishedRestaurant(slug));
 }
 
 export async function getItem(

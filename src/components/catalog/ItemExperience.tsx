@@ -211,6 +211,8 @@ export function ItemExperience({ item, children }: { item: CatalogItem; children
                 fill
                 priority
                 sizes="(min-width: 1024px) 560px, 100vw"
+                // Admin previews use short-lived signed URLs; there's nothing worth optimising or caching.
+                unoptimized={poster.includes("X-Amz-Signature=")}
                 className={`object-contain transition-opacity duration-700 ${viewer === "ready" ? "opacity-0" : "opacity-100"}`}
               />
             )}
@@ -222,8 +224,9 @@ export function ItemExperience({ item, children }: { item: CatalogItem; children
                 {
                   key: attempt,
                   ref: attachViewer,
-                  // model-viewer caches a failed load per URL, so a retry needs a fresh one.
-                  src: attempt ? `${glb}?retry=${attempt}` : glb,
+                  // model-viewer caches a failed load per URL, so a retry needs a fresh one. A hash
+                  // isn't sent to the server, so this also works for signed (admin preview) URLs.
+                  src: attempt ? `${glb}#retry=${attempt}` : glb,
                   "ios-src": usdz,
                   alt: `3D model of ${item.name}. Drag to turn it, pinch to zoom.`,
                   ar: true,

@@ -48,6 +48,8 @@ export type CatalogItem = {
   category: string;
   /** Square thumbnail for the menu card. */
   thumbnail?: string;
+  /** Shown only when set. */
+  price?: { amount: number; currency: string };
   model: ModelAsset;
   scale: ModelScale;
   /** Marks test / placeholder items so the UI can say so. */

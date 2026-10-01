@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItem, listRestaurants } from "@/catalog/data";
+import { formatPrice } from "@/catalog/format";
 import { ItemExperience } from "@/components/catalog/ItemExperience";
 import { MenuHeader } from "@/components/catalog/MenuChrome";
 import { catalogPath } from "@/config/app";
@@ -54,6 +55,7 @@ export default async function ItemPage({ params }: Params) {
           {category && <p className="text-sm font-medium text-m-accent">{category.name}</p>}
           <h1 className="mt-1 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.03em] sm:text-5xl">{item.name}</h1>
           <p className="mt-3 max-w-[48ch] text-[1.02rem] leading-relaxed text-m-muted">{item.description}</p>
+          {item.price && <p className="mt-3 text-lg font-semibold">{formatPrice(item.price)}</p>}
           {item.isTestItem && (
             <p className="mt-4 flex items-start gap-2 rounded-2xl bg-m-surface px-4 py-3 text-sm leading-relaxed text-m-muted">
               <Info size={18} className="mt-0.5 shrink-0" aria-hidden />

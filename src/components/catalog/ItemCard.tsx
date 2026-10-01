@@ -1,6 +1,7 @@
 import { ArrowRight, Cube, CubeFocus } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
 import Link from "next/link";
+import { formatPrice } from "@/catalog/format";
 import type { CatalogItem } from "@/catalog/types";
 import { itemPath } from "@/config/app";
 
@@ -48,6 +49,7 @@ export function ItemCard({ restaurantSlug, item, featured = false, priority = fa
           {item.name}
         </h3>
         <p className="mt-1 text-sm leading-relaxed text-m-muted">{item.description}</p>
+        {item.price && <p className="mt-1.5 text-sm font-semibold">{formatPrice(item.price)}</p>}
 
         <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-m-muted">
           {has3D && (
