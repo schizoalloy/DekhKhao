@@ -179,3 +179,80 @@
   background-size: auto, auto, cover;
   background-position: center;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Customer menu app (/r/...)                                          */
+/*  Same brand palette as the marketing site, plus a dark mode that     */
+/*  follows the phone, because restaurants are often dim.               */
+/* ------------------------------------------------------------------ */
+.menu {
+  --m-bg: #f3ece1;
+  --m-surface: #faf6ef;
+  --m-stage: #e8dccb;
+  --m-text: #1b1714;
+  --m-muted: #675c52;
+  --m-line: rgb(27 23 20 / 0.12);
+  --m-button: #1b1714;
+  --m-button-text: #f3ece1;
+  /* Restaurant accent, set per restaurant; small highlights only */
+  --m-accent: var(--restaurant-accent, #b3391f);
+  background: var(--m-bg);
+  color: var(--m-text);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  .menu {
+    --m-bg: #141110;
+    --m-surface: #1e1a17;
+    --m-stage: #26211d;
+    --m-text: #f3ece1;
+    --m-muted: #b4a898;
+    --m-line: rgb(243 236 225 / 0.12);
+    --m-button: #f3ece1;
+    --m-button-text: #141110;
+    --m-accent: color-mix(in oklab, var(--restaurant-accent, #c2412a) 72%, white);
+    color-scheme: dark;
+  }
+  html:has(.menu),
+  html:has(.menu) body {
+    background: #141110;
+  }
+}
+
+@theme inline {
+  --color-m-bg: var(--m-bg);
+  --color-m-surface: var(--m-surface);
+  --color-m-stage: var(--m-stage);
+  --color-m-text: var(--m-text);
+  --color-m-muted: var(--m-muted);
+  --color-m-line: var(--m-line);
+  --color-m-button: var(--m-button);
+  --color-m-button-text: var(--m-button-text);
+  --color-m-accent: var(--m-accent);
+}
+
+/* Soft studio light behind 3D items */
+.menu-stage {
+  background:
+    radial-gradient(70% 60% at 50% 38%, rgb(255 255 255 / 0.55), transparent 70%),
+    var(--m-stage);
+}
+@media (prefers-color-scheme: dark) {
+  .menu-stage {
+    background:
+      radial-gradient(70% 60% at 50% 38%, rgb(255 255 255 / 0.07), transparent 70%),
+      var(--m-stage);
+  }
+}
+
+/* model-viewer's built-in progress bar and AR button are replaced by our own UI */
+.menu model-viewer::part(default-progress-bar),
+.menu model-viewer::part(default-ar-button) {
+  display: none;
+}
+
+@media print {
+  .grain::after {
+    display: none;
+  }
+}

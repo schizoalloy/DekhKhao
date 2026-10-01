@@ -1,0 +1,30 @@
+{
+  "slug": "demo",
+  "name": "DekhKhao Demo",
+  "catalogTitle": "Menu",
+  "indexable": false,
+  "categories": [{ "id": "test", "name": "Test Item" }],
+  "items": [
+    {
+      "slug": "luffy",
+      "name": "Luffy",
+      "description": "3D model test item",
+      "category": "test",
+      "isTestItem": true,
+      "thumbnail": "/catalog/demo/luffy/luffy-thumb.webp",
+      "model": {
+        "usdz": "/catalog/demo/luffy/luffy.usdz",
+        "glb": "/catalog/demo/luffy/luffy.glb",
+        "glbProvenance": "Converted from luffy.usdz with scripts/usdz_to_gltf.py (same mesh, UVs and textures; size unchanged).",
+        "poster": "/catalog/demo/luffy/luffy-poster.webp",
+        "cameraOrbit": "20deg 78deg auto"
+      },
+      "scale": {
+        "dimensionsCm": { "width": 7.56, "height": 9.69, "depth": 6.59 },
+        "source": "file",
+        "verified": false,
+        "lockScaleInAR": true
+      }
+    }
+  ]
+}

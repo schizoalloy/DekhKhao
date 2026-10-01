@@ -14,3 +14,8 @@ assets-src/
 .claude/
 .agents/
 skills-lock.json
+
+# development QR codes (local network addresses; never print these)
+public/qr/*.dev.*
+
+.env*

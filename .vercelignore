@@ -1,0 +1,19 @@
+# Not uploaded by the Vercel CLI
+node_modules
+.next
+out
+.vercel
+.git
+*.tsbuildinfo
+.env*.local
+
+# raw scan sources (dev-time only)
+assets-src
+
+# local AI-assistant tooling
+.claude
+.agents
+skills-lock.json
+
+# development QR codes (local network addresses)
+public/qr/*.dev.*

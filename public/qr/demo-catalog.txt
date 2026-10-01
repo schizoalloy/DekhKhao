@@ -1,0 +1,7 @@
+Encoded URL: https://dekh-khao.vercel.app/r/demo
+Restaurant:  demo
+Kind:        production
+Generated:   2026-09-27T17:43:53.902Z
+
+Regenerate after the domain changes:
+  npm run qr -- demo --base https://your-domain.com
