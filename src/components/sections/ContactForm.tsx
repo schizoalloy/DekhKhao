@@ -19,7 +19,7 @@ function validate(v: EnquiryFields): Errors {
   if (!/^[+\d\s()-]+$/.test(v.phone.trim()) || digits.length < 10 || digits.length > 15)
     e.phone = "Enter a phone number we can reach you on, e.g. 0300 1234567.";
   if (v.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim()))
-    e.email = "That email doesn’t look right. It’s optional — you can leave it blank.";
+    e.email = "That email doesn’t look right. It’s optional, so you can leave it blank.";
   return e;
 }
 
@@ -61,9 +61,9 @@ export function ContactForm() {
   };
 
   const input =
-    "w-full min-h-13 rounded-2xl border border-line bg-white/70 px-4 py-3 text-base text-ink placeholder:text-ink/35 " +
-    "transition-[border-color,box-shadow] duration-300 focus:border-ink focus:outline-none focus:ring-4 focus:ring-ink/10 " +
-    "aria-[invalid=true]:border-chilli aria-[invalid=true]:ring-chilli/10";
+    "w-full min-h-13 rounded-2xl border border-charcoal/20 bg-cream px-4 py-3 text-base text-ink placeholder:text-[#77766f] " +
+    "transition-[border-color,box-shadow] duration-300 focus:border-teal focus:outline-none focus:ring-4 focus:ring-teal/15 " +
+    "aria-[invalid=true]:border-chilli aria-[invalid=true]:ring-orange/15";
 
   const fieldProps = (k: Field) => ({
     id: `${uid}-${k}`,
@@ -152,7 +152,7 @@ export function ContactForm() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 24 }}
-            className="flex items-start gap-3 rounded-2xl bg-leaf/10 p-4 text-sm text-ink"
+            className="flex items-start gap-3 rounded-2xl bg-teal-soft p-4 text-sm text-ink"
           >
             <CheckCircle size={20} weight="regular" className="mt-0.5 shrink-0 text-leaf" aria-hidden />
             <p>

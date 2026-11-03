@@ -49,7 +49,7 @@ export function MobileCTA() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 90, opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 28 }}
-          className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex gap-2 rounded-full bg-ink/95 p-1.5 shadow-[0_20px_40px_-12px_rgb(0_0_0/0.45)] backdrop-blur md:hidden"
+          className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex gap-2 rounded-full bg-teal p-1.5 shadow-[0_20px_40px_-12px_rgb(0_68_61/0.55)] md:hidden"
         >
           <a
             href="#contact"
@@ -62,7 +62,7 @@ export function MobileCTA() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"
-            className="grid min-h-12 w-14 place-items-center rounded-full bg-chilli text-paper active:scale-[0.96]"
+            className="grid min-h-12 w-14 place-items-center rounded-full bg-orange text-charcoal active:scale-[0.96]"
           >
             <WhatsappLogo size={22} weight="regular" aria-hidden />
           </a>

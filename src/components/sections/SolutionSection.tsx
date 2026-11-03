@@ -3,19 +3,17 @@ import { MenuToTable } from "./MenuToTable";
 
 export function SolutionSection() {
   return (
-    <section aria-labelledby="solution-title" className="relative bg-paper-deep/60 pt-24 md:pt-36">
+    <section aria-labelledby="solution-title" className="relative bg-cream-deep pt-24 md:pt-32">
       <div className="container-page grid gap-10 lg:grid-cols-12">
         <SectionHeading
           id="solution-title"
-          index="02"
-          eyebrow="The solution"
           className="lg:col-span-8"
           title={
             <>
               Don’t make customers imagine their food. <Accent>Let them see it.</Accent>
             </>
           }
-          lede="Your menu tells customers what the food is. DekhKhao turns that menu into an interactive visual experience — so they can see it, at its real size, before they order."
+          lede="Your menu tells customers what a dish is. DekhKhao shows them: a true-to-size 3D version of the dish, placed on their own table, before they order."
         />
       </div>
       <MenuToTable />

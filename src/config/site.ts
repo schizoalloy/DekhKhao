@@ -21,10 +21,9 @@ export const siteConfig = {
   name: "DekhKhao",
   nameUrdu: "دیکھ کھاؤ",
   tagline: "What you see is what you get.",
-  company: "Portive Technologies",
   title: "DekhKhao — What You See Is What You Get",
   description:
-    "DekhKhao lets restaurant customers visualize food in 3D and augmented reality before they order.",
+    "DekhKhao lets restaurant customers see food at its real size in augmented reality before they order. Fully managed, no app to download.",
   url: resolveSiteUrl(),
   /**
    * Reserved for the future product, where restaurant menus live at
@@ -40,9 +39,9 @@ export const siteConfig = {
 
 // Root-relative so they also work from other pages (e.g. /privacy).
 export const navLinks = [
+  { label: "Demo", href: "/#demo" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "For Restaurants", href: "/#for-restaurants" },
-  { label: "Experience", href: "/#experience" },
   { label: "FAQ", href: "/#faq" },
 ] as const;
 

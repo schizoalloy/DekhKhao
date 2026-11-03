@@ -1,37 +1,40 @@
 import type { ReactNode } from "react";
 
 type SectionHeadingProps = {
-  index?: string;
-  eyebrow: string;
   title: ReactNode;
   lede?: ReactNode;
   id?: string;
+  /** "paper" for teal or dark grounds. */
   tone?: "ink" | "paper";
   className?: string;
+  /** @deprecated Section labels above headings were retired with the 2026 brand. Ignored. */
+  eyebrow?: string;
+  /** @deprecated Ignored. */
+  index?: string;
 };
 
-/** Editorial section opener: numbered eyebrow, display title, short lede. */
-export function SectionHeading({ index, eyebrow, title, lede, id, tone = "ink", className = "" }: SectionHeadingProps) {
-  const muted = tone === "ink" ? "text-muted" : "text-paper/65";
+/** Section opener: a bold Sora headline and a short lede, stacked. */
+export function SectionHeading({ title, lede, id, tone = "ink", className = "" }: SectionHeadingProps) {
+  const muted = tone === "ink" ? "text-muted" : "text-cream/80";
   return (
-    <header className={`max-w-3xl ${className}`}>
-      <p className={`eyebrow flex items-center gap-3 ${muted}`}>
-        {index && <span className="text-chilli">{index}</span>}
-        <span aria-hidden className="h-px w-8 bg-current opacity-40" />
-        {eyebrow}
-      </p>
+    <header className={`max-w-3xl ${tone === "paper" ? "[--hand:var(--color-yellow)]" : ""} ${className}`}>
       <h2
         id={id}
-        className="mt-5 font-display text-[clamp(2.1rem,5.4vw,4.4rem)] font-semibold leading-[0.95] tracking-[-0.035em] text-balance"
+        data-split=""
+        className="font-display text-[clamp(2rem,4.8vw,3.9rem)] font-bold leading-[1.04] tracking-[-0.035em] text-balance"
       >
         {title}
       </h2>
-      {lede && <p className={`mt-6 max-w-[58ch] text-[1.05rem] leading-relaxed ${muted}`}>{lede}</p>}
+      {lede && <p className={`mt-5 max-w-[56ch] text-[1.05rem] leading-relaxed ${muted}`}>{lede}</p>}
     </header>
   );
 }
 
-/** Italic serif accent used inside display headings. */
+/** Handwritten aside inside a headline, in the brand's tagline voice. */
 export function Accent({ children }: { children: ReactNode }) {
-  return <em className="font-serif font-normal italic tracking-[-0.01em]">{children}</em>;
+  return (
+    <span className="hand inline-block pb-1 text-[1.18em] leading-[1.1] text-[color:var(--hand,var(--color-teal))]">
+      {children}
+    </span>
+  );
 }

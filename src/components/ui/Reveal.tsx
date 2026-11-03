@@ -1,30 +1,23 @@
-"use client";
-
-import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
-import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
 type RevealProps = {
   children: ReactNode;
   className?: string;
+  /** Seconds. Items revealed together are also staggered automatically. */
   delay?: number;
+  /** @deprecated Kept for call-site compatibility; distance is set by the page motion system. */
   y?: number;
   as?: "div" | "li" | "section" | "figure";
 };
 
-/** Fade-and-rise on first view. Renders statically for reduced-motion users. */
-export function Reveal({ children, className, delay = 0, y = 28, as = "div" }: RevealProps) {
-  const reduce = useSafeReducedMotion();
-  const Comp = motion[as];
-  if (reduce) return <Comp className={className}>{children}</Comp>;
+/**
+ * Marks content to settle into place as it scrolls into view. The animation itself lives in
+ * components/motion/PageMotion.tsx; without JS or with reduced motion this is a plain element.
+ */
+export function Reveal({ children, className, delay = 0, as = "div" }: RevealProps) {
+  const Comp = as;
   return (
-    <Comp
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -12% 0px" }}
-      transition={{ type: "spring", stiffness: 90, damping: 22, delay }}
-    >
+    <Comp className={className} data-reveal="" data-reveal-delay={delay || undefined}>
       {children}
     </Comp>
   );

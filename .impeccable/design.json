@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-03T12:00:00Z",
+  "title": "Design System: DekhKhao",
+  "extensions": {
+    "colorMeta": {
+      "teal": { "role": "primary", "displayName": "Dekh Teal", "canonical": "#005F56", "tonalRamp": ["#00211e", "#003a35", "#00544c", "#005f56", "#2f8076", "#6aa69d", "#a8ccc6", "#d9e9e5"] },
+      "orange": { "role": "secondary", "displayName": "Khao Orange", "canonical": "#FF6B00", "tonalRamp": ["#4a1e00", "#7a3300", "#b84700", "#e85f00", "#ff6b00", "#ff9447", "#ffbf8f", "#ffe6d4"] },
+      "yellow": { "role": "secondary", "displayName": "Zest Yellow", "canonical": "#F7C600", "tonalRamp": ["#4a3b00", "#7a6200", "#ab8a00", "#d9ae00", "#f7c600", "#fad64d", "#fce592", "#fef5d3"] },
+      "pink": { "role": "tertiary", "displayName": "Pop Pink", "canonical": "#E6007A", "tonalRamp": ["#430023", "#73003d", "#a30056", "#e6007a", "#ef4d9f", "#f58cc2", "#fac3df", "#fde7f2"] },
+      "cream": { "role": "neutral", "displayName": "Cream", "canonical": "#FAF9F4" },
+      "cream-deep": { "role": "neutral", "displayName": "Cream Deep", "canonical": "#F3ECDD" },
+      "charcoal": { "role": "neutral", "displayName": "Charcoal", "canonical": "#2B2B2B" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Wordmark", "purpose": "The stacked Dekh / Khao wordmark only." },
+      "headline": { "displayName": "Headline", "purpose": "One per section, with a handwritten aside." },
+      "hand": { "displayName": "Handwritten", "purpose": "Taglines and the aside inside headlines (Caveat)." }
+    },
+    "shadows": [
+      { "name": "object-lift", "value": "0 40px 80px -40px rgb(0 68 61 / 0.65)", "purpose": "Large objects resting above the page: the hero stage." },
+      { "name": "button", "value": "0 6px 16px -8px rgb(0 68 61 / 0.7)", "purpose": "Primary pill buttons." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Arrivals and reveals." },
+      { "name": "ease-snap", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "CSS transitions: hover, details open/close." },
+      { "name": "gsap-default", "value": "expo.out, 0.9s", "purpose": "GSAP default for every arrival (src/components/motion/gsap.ts)." },
+      { "name": "stick", "value": "back.out(1.25)", "purpose": "Cut-paper stickers, mark pieces and step icons landing. Nothing else overshoots." },
+      { "name": "durations", "value": "0.2s quick / 0.55s standard / 0.9s slow", "purpose": "DUR palette in gsap.ts." },
+      { "name": "hero-intro", "value": "~2s GSAP timeline", "purpose": "Mark pieces scatter in, wordmark rises, tagline writes on, stage and stickers land." },
+      { "name": "smooth-scroll", "value": "Lenis, lerp 0.1, on the GSAP ticker", "purpose": "Page scroll; off under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action, Talk to Us.",
+      "html": "<button class=\"ds-btn-primary\">Talk to Us</button>",
+      "css": ".ds-btn-primary { background: #005F56; color: #FAF9F4; height: 56px; padding: 0 28px; border: 0; border-radius: 9999px; font: 600 1rem/1 Sora, system-ui, sans-serif; box-shadow: 0 6px 16px -8px rgb(0 68 61 / 0.7); transition: background-color .2s, transform .2s; } .ds-btn-primary:hover { background: #00443D; } .ds-btn-primary:active { transform: scale(.97); } .ds-btn-primary:focus-visible { outline: 3px solid #FF6B00; outline-offset: 3px; }"
+    },
+    {
+      "name": "Pop Button",
+      "kind": "button",
+      "refersTo": "button-pop",
+      "description": "Orange variant for a second, louder placement of the main action.",
+      "html": "<button class=\"ds-btn-pop\">Talk to Us</button>",
+      "css": ".ds-btn-pop { background: #FF6B00; color: #2B2B2B; height: 56px; padding: 0 28px; border: 0; border-radius: 9999px; font: 600 1rem/1 Sora, system-ui, sans-serif; transition: background-color .2s, transform .2s; } .ds-btn-pop:hover { background: #ff7f22; } .ds-btn-pop:active { transform: scale(.97); } .ds-btn-pop:focus-visible { outline: 3px solid #2B2B2B; outline-offset: 3px; }"
+    },
+    {
+      "name": "Size Chips",
+      "kind": "chip",
+      "refersTo": "chip-size-active",
+      "description": "Real-size selector with a yellow active pill.",
+      "html": "<div class=\"ds-chips\"><button>10\"</button><button class=\"on\">12\"</button><button>14\"</button></div>",
+      "css": ".ds-chips { display: inline-grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: #005F56; border-radius: 9999px; } .ds-chips button { min-height: 44px; min-width: 72px; border: 0; border-radius: 9999px; background: transparent; color: #FAF9F4; font: 700 .875rem Sora, sans-serif; } .ds-chips button.on { background: #F7C600; color: #2B2B2B; } .ds-chips button:focus-visible { outline: 3px solid #FF6B00; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Contact form input.",
+      "html": "<label class=\"ds-field\"><span>Your name</span><input placeholder=\"Full name\"></label>",
+      "css": ".ds-field { display: grid; gap: 8px; font: 500 .875rem Sora, sans-serif; color: #2B2B2B; } .ds-field input { height: 52px; padding: 0 16px; border: 1px solid rgb(43 43 43 / .2); border-radius: 16px; background: #FAF9F4; font: 400 1rem Sora, sans-serif; color: #2B2B2B; } .ds-field input::placeholder { color: #77766f; } .ds-field input:focus { outline: none; border-color: #005F56; box-shadow: 0 0 0 4px rgb(0 95 86 / .15); }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "description": "Top bar: wordmark, four links, one action.",
+      "html": "<nav class=\"ds-nav\"><b>DekhKhao</b><a href=\"#\">Demo</a><a href=\"#\">How It Works</a><a href=\"#\">FAQ</a><span class=\"cta\">Talk to Us</span></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 24px; padding: 12px 24px; background: #FAF9F4; font: 500 .92rem Sora, sans-serif; } .ds-nav b { color: #005F56; font-weight: 800; letter-spacing: -.03em; margin-right: auto; } .ds-nav a { color: rgb(43 43 43 / .8); text-decoration: underline 2px transparent; text-underline-offset: 6px; } .ds-nav a:hover { color: #005F56; text-decoration-color: #FF6B00; } .ds-nav .cta { background: #005F56; color: #FAF9F4; border-radius: 9999px; padding: 10px 20px; font-weight: 600; }"
+    },
+    {
+      "name": "Managed Split",
+      "kind": "card",
+      "description": "Signature panel: what the restaurant does (yellow) vs what DekhKhao does (teal).",
+      "html": "<div class=\"ds-split\"><div><h4>What you do</h4><p>Send us the dishes</p></div><div class=\"t\"><h4>What DekhKhao does</h4><p>Build true-to-size 3D models</p></div></div>",
+      "css": ".ds-split { display: grid; grid-template-columns: 1fr 1.5fr; border-radius: 28px; overflow: hidden; font: 400 1rem Sora, sans-serif; } .ds-split > div { padding: 28px; background: #F7C600; color: #2B2B2B; } .ds-split > div.t { background: #005F56; color: #FAF9F4; } .ds-split h4 { margin: 0 0 12px; font: 700 2rem/1 Caveat, cursive; } .ds-split .t h4 { color: #F7C600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The brand sticker sheet, come to life",
+    "overview": "A cream page where food snaps onto the table at real size the way the cut-paper pieces of the Urdu mark snap together. Flat colour, bold Sora, one handwritten aside per heading, and a small family of geometric stickers used with intent.",
+    "keyCharacteristics": ["Geometric Urdu mark leads the identity", "Teal fields, orange/yellow/pink as stickers", "Sora + Caveat", "Real size shown with real numbers", "Example media labelled honestly"],
+    "rules": [
+      { "name": "One field at a time", "body": "A section is cream or teal, never both, except the managed-service split.", "section": "colors" },
+      { "name": "Accents are stickers", "body": "Orange, yellow and pink appear as shapes, strokes and chips, never as washes or small text.", "section": "colors" },
+      { "name": "No labels above headings", "body": "No eyebrows or section numbers; the headline speaks for itself.", "section": "typography" }
+    ],
+    "dos": ["Put the mark first", "Show real size with real numbers", "Label example and third-party media", "One handwritten aside per heading"],
+    "donts": ["No gradients, glass or glows", "No eyebrows or section numbers", "No pink larger than a dot", "No bounce easing", "Never present DekhKhao as ordering, POS or a digital menu"]
+  }
+}

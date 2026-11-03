@@ -11,8 +11,8 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 const stages = [
   { key: "Menu", title: "It starts as a line of text.", body: "“Pepperoni pizza, 12-inch.” Accurate, and completely abstract." },
   { key: "3D", title: "Then it becomes an object.", body: "Each dish gets a 3D form customers can turn and look at." },
-  { key: "Real world", title: "Then it’s on the table.", body: "Through the phone camera, the dish appears where it would be served — at its real size." },
-  { key: "True to size", title: "At exactly its real size.", body: "A 12-inch pizza is 12 inches on the table. Then they order the usual way — knowing what’s coming." },
+  { key: "Real world", title: "Then it’s on the table.", body: "Through the phone camera, the dish appears where it would be served, at its real size." },
+  { key: "True to size", title: "At exactly its real size.", body: "A 12-inch pizza is 12 inches on the table. Then they order the usual way, knowing what’s coming." },
 ] as const;
 
 /**
@@ -45,9 +45,6 @@ function StageLabel({ i, progress }: { i: number; progress: MotionValue<number> 
   return (
     <motion.li style={{ opacity }} className="border-t border-line py-2.5 md:py-5">
       <motion.div style={{ x }}>
-        <p className="eyebrow text-chilli">
-          {String(i + 1).padStart(2, "0")} — {s.key}
-        </p>
         <p className="mt-1 font-display text-lg font-semibold tracking-[-0.02em] md:text-2xl">{s.title}</p>
         <p className="mt-1 hidden max-w-[40ch] text-[0.95rem] leading-relaxed text-muted md:block">{s.body}</p>
       </motion.div>
@@ -82,21 +79,21 @@ function Stage({ progress }: { progress: MotionValue<number> }) {
   return (
     <div className="relative aspect-square w-full overflow-hidden rounded-[2rem]">
       {/* paper backdrop */}
-      <div className="absolute inset-0 bg-paper-deep" />
+      <div className="absolute inset-0 bg-cream" />
       {/* table */}
       <motion.div style={{ opacity: tableOpacity }} className="table-surface absolute inset-0">
         <div className="absolute inset-0 flex items-center justify-center [perspective:700px]">
           <Reticle className="absolute top-[4%] aspect-square w-[80%] opacity-60 [transform:rotateX(58deg)]" />
         </div>
-        <span className="eyebrow absolute left-5 top-5 text-paper/70">Camera view</span>
+        <span className="absolute left-5 top-5 rounded-full bg-charcoal/55 px-3 py-1 text-xs font-semibold text-cream backdrop-blur">Camera view</span>
       </motion.div>
 
       {/* menu card */}
       <motion.div
         style={{ opacity: cardOpacity, y: cardY, scale: cardScale }}
-        className="absolute inset-x-[10%] top-[16%] rounded-2xl bg-paper p-5 shadow-[0_30px_60px_-30px_rgb(60_30_10/0.35)] md:p-7"
+        className="absolute inset-x-[10%] top-[16%] rounded-2xl bg-white p-5 shadow-[0_30px_60px_-30px_rgb(0_68_61/0.35)] md:p-7"
       >
-        <p className="eyebrow text-muted">Pizza</p>
+        <p className="text-xs font-bold uppercase tracking-[0.08em] text-teal">Pizza</p>
         <ul className="mt-4 divide-y divide-line text-[0.95rem]">
           <li className="flex items-center justify-between gap-3 py-3">
             <span className="flex items-center gap-3">
@@ -110,14 +107,14 @@ function Stage({ progress }: { progress: MotionValue<number> }) {
               />
               <span>
                 <span className="block font-medium">Pepperoni</span>
-                <span className="font-mono text-xs text-muted">10 · 12 · 14 inch</span>
+                <span className="text-xs tabular-nums text-muted">10, 12 or 14 inch</span>
               </span>
             </span>
-            <span className="rounded-full bg-ink px-3 py-1 text-xs text-paper">View in 3D</span>
+            <span className="rounded-full bg-teal px-3 py-1 text-xs font-semibold text-cream">View in 3D</span>
           </li>
           {["Margherita", "Chicken tikka"].map((n) => (
             <li key={n} className="flex items-center gap-3 py-3 text-muted">
-              <span className="size-10 shrink-0 rounded-full bg-ink/10" />
+              <span className="size-10 shrink-0 rounded-full bg-cream-deep" />
               {n}
             </li>
           ))}
@@ -178,16 +175,16 @@ function Stage({ progress }: { progress: MotionValue<number> }) {
       {/* true-to-size readout */}
       <motion.div
         style={{ opacity: sizeOpacity, y: sizeY }}
-        className="absolute inset-x-[10%] bottom-[7%] flex items-center justify-between gap-3 rounded-full bg-paper py-2 pl-5 pr-2 shadow-[0_20px_40px_-20px_rgb(0_0_0/0.5)]"
+        className="absolute inset-x-[10%] bottom-[7%] flex items-center justify-between gap-3 rounded-full bg-cream py-2 pl-5 pr-2 shadow-[0_20px_40px_-20px_rgb(0_0_0/0.5)]"
       >
         <span className="truncate text-sm">
           <span className="font-medium">Pepperoni</span>{" "}
-          <span className="font-mono text-muted">
+          <span className="tabular-nums text-muted">
             {pizza.realSize}
             <span className="hidden sm:inline"> · {pizza.sizeCm.width.toFixed(1)} cm</span>
           </span>
         </span>
-        <span className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-chilli px-4 text-sm font-medium text-paper">
+        <span className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-yellow px-4 text-sm font-bold text-charcoal">
           <Ruler size={16} weight="bold" aria-hidden /> Actual size
         </span>
       </motion.div>
@@ -207,9 +204,6 @@ export function MenuToTable() {
       <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stages.map((s, i) => (
           <li key={s.key} className="border-t border-line pt-5">
-            <p className="eyebrow text-chilli">
-              {String(i + 1).padStart(2, "0")} — {s.key}
-            </p>
             <p className="mt-2 font-display text-xl font-semibold">{s.title}</p>
             <p className="mt-1 text-muted">{s.body}</p>
           </li>
@@ -229,8 +223,8 @@ export function MenuToTable() {
                 <StageLabel key={s.key} i={i} progress={scrollYProgress} />
               ))}
             </ol>
-            <div className="mt-5 h-px w-full bg-line">
-              <motion.div style={{ scaleX: bar }} className="h-px origin-left bg-chilli" />
+            <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-charcoal/10">
+              <motion.div style={{ scaleX: bar }} className="h-full origin-left rounded-full bg-orange" />
             </div>
           </div>
           <div className="order-1 mx-auto w-full max-w-[min(100%,46dvh)] md:order-2 md:col-span-7 md:max-w-[min(100%,74dvh)]">

@@ -9,8 +9,10 @@ import { requireSupabaseConfig } from "./env";
  * For admin pages and server actions.
  */
 export async function createSupabaseServerClient() {
-  const { url, key } = requireSupabaseConfig();
+  // Cookies first: it marks every caller as request-time, so a deployment without the Supabase
+  // settings still builds (the admin pages fail only when visited, not during prerendering).
   const cookieStore = await cookies();
+  const { url, key } = requireSupabaseConfig();
   return createServerClient<Database>(url, key, {
     cookies: {
       getAll: () => cookieStore.getAll(),

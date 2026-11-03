@@ -2,12 +2,12 @@
 
 export const problems = [
   {
-    label: "Size is a number",
+    label: "Size is just a number",
     body: "“12-inch” is precise, and still hard to picture. Is that for one person or three?",
   },
   {
     label: "Portions are a guess",
-    body: "A “full” karahi, a “family” platter, a “large” fries — every restaurant means something different.",
+    body: "A “full” karahi, a “family” platter, a “large” fries: every restaurant means something different.",
   },
   {
     label: "New dishes feel risky",
@@ -17,77 +17,79 @@ export const problems = [
     label: "Photos only go so far",
     body: "A flat, cropped photo shows a dish, not how big it is on the table in front of you.",
   },
-  {
-    label: "QR menus look the same",
-    body: "Most digital menus are a PDF behind a code. Nothing about them says anything about your restaurant.",
-  },
 ] as const;
 
 export const steps = [
-  { n: "01", title: "Scan", body: "The customer scans the QR code on their table." },
-  { n: "02", title: "Choose", body: "They pick a dish from your digital menu." },
-  { n: "03", title: "See", body: "The dish opens in 3D. They can turn it, get close, look at it from the side." },
-  { n: "04", title: "Place", body: "Through the phone camera, it sits on their actual table — at its real size." },
+  { title: "Scan", body: "The customer scans the DekhKhao QR code on their table." },
+  { title: "Pick a dish", body: "They choose one of the dishes you’ve brought to life." },
+  { title: "See it, real size", body: "It appears on their actual table through the phone camera, at the size it’s served." },
+  { title: "Decide better", body: "Then they order the way they always do, knowing what’s coming." },
 ] as const;
 
 export const experiencePoints = [
   { title: "Understand the size", body: "A 10-inch and a 14-inch pizza stop being numbers and start being objects." },
   { title: "Judge the portion", body: "See whether a platter covers the table or fits beside the chai." },
-  { title: "Explore the menu", body: "Turn a dish around. Get close. Look at it from the side." },
+  { title: "Look closer", body: "Turn a dish around, get close, look at it from the side." },
   { title: "Try something new", body: "Unfamiliar food is less of a gamble when you can see it first." },
-  { title: "Remember the meal", body: "It’s the part of the evening people show their friends." },
 ] as const;
+
+/** What the restaurant does vs what DekhKhao does: the "fully managed" promise. */
+export const managed = {
+  restaurant: ["Send us the dishes you want to show", "Put the QR codes on your tables"],
+  dekhkhao: [
+    "Build a true-to-size 3D model of every dish",
+    "Check each model against the real dish",
+    "Host and run the AR experience",
+    "Supply print-ready table QR codes",
+  ],
+} as const;
 
 export const benefits = [
   {
-    title: "Make the menu visual",
-    body: "Customers understand dishes beyond a line of text and a static photo.",
+    title: "Real size, not a guess",
+    body: "Customers answer “how big is it?” for themselves, before they order.",
   },
   {
-    title: "Reduce uncertainty",
-    body: "Customers can answer “how big is it?” for themselves, and know what they’re ordering.",
+    title: "Your signature dishes, up close",
+    body: "Every angle, at the size you serve it. A better showcase than a line of text and a photo.",
   },
   {
-    title: "Showcase your food",
-    body: "Give signature dishes the presentation they deserve — at their real size, from every angle.",
+    title: "Nothing to change",
+    body: "No app for customers, no new system for staff. Your menu, POS and ordering stay exactly as they are.",
   },
   {
-    title: "Stand out",
-    body: "Offer something beyond a conventional QR menu — a menu worth talking about.",
-  },
-  {
-    title: "Build a digital food library",
-    body: "Each dish gets its own reusable 3D representation — ready for the menu, your socials, and whatever comes next.",
+    title: "A table moment people remember",
+    body: "Food appearing on the table is something guests show the people next to them.",
   },
 ] as const;
 
 export const faqs = [
   {
     q: "What is DekhKhao?",
-    a: "DekhKhao turns your restaurant’s menu into something customers can see. They scan a QR code, choose a dish, and view it in 3D — or placed on their own table through their phone camera — before they order.",
+    a: "A simple, fully managed augmented reality experience for restaurants. Customers scan a QR code on the table, pick a dish and see it on their own table through the phone camera, at its real size, before they order.",
+  },
+  {
+    q: "What does “fully managed” mean?",
+    a: "You send us the dishes you want to show. We build a true-to-size 3D model of each one, check it against the real dish, host the AR experience and give you print-ready QR codes for your tables. Your staff never touch any 3D software.",
+  },
+  {
+    q: "Is DekhKhao a digital menu, POS or ordering system?",
+    a: "No. It’s a visual layer that sits next to whatever you already use. Customers still order and pay exactly as they do today: with your waiters, at the counter, or through your own app or delivery partners.",
   },
   {
     q: "Do customers need to download an app?",
-    a: "No. The experience is designed to run in the phone’s web browser, straight from the QR code. We’re testing across a wide range of phones, and we’ll confirm device support with you before launch.",
+    a: "No. The QR code opens the experience in the phone’s browser. iPhones use Apple’s built-in AR viewer; Android phones use Google’s. We’ll confirm support on the phones your customers use before launch.",
   },
   {
-    q: "Does it work with existing restaurant menus?",
-    a: "DekhKhao is built to sit alongside the menu you already have — your dishes, names and sizes stay the same, and we add the visual layer. How it connects to your current setup is something we work out with each restaurant.",
+    q: "Can customers really see the actual size?",
+    a: "Yes, that’s the point. Each dish is modelled to its measured dimensions, so a 12-inch pizza appears as a 12-inch pizza on the table. Phone cameras need decent light and a clear surface to place things accurately.",
   },
   {
-    q: "Can customers order through DekhKhao?",
-    a: "No. DekhKhao only shows the food. Your ordering stays exactly as it is — waiters, counter, your own app or delivery partners. We add the visual layer that helps customers decide.",
-  },
-  {
-    q: "What food can be visualized?",
-    a: "Potentially any menu item that can be represented well in 3D — pizzas, burgers, karahi, biryani, platters, desserts and drinks. We’ll help you decide which dishes benefit most.",
-  },
-  {
-    q: "Can customers see the actual size?",
-    a: "Yes — that’s the whole point. Every dish is modelled to its real, measured dimensions, so a 12-inch pizza appears as a 12-inch pizza on the customer’s table, and a 10-inch looks like a 10-inch next to it. Phone cameras need good light and a clear surface to place things accurately, and we check every model against the real dish before it goes live.",
+    q: "What food can be shown?",
+    a: "Most dishes that hold their shape: pizzas, burgers, karahi, biryani, platters, desserts and drinks. We’ll help you choose the dishes where seeing the size helps customers most.",
   },
   {
     q: "How does a restaurant get started?",
-    a: "Send us a message. We’ll talk through your menu, pick the first dishes to bring to life, and show you what it looks like for your restaurant.",
+    a: "Message us on WhatsApp. We’ll talk through which dishes to start with and show you what it looks like for your restaurant.",
   },
 ] as const;

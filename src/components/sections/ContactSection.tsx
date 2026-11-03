@@ -5,21 +5,17 @@ import { WhatsAppCTA } from "./WhatsAppCTA";
 
 export function ContactSection() {
   return (
-    <section id="contact" aria-labelledby="contact-title" className="bg-paper-deep py-24 md:py-36">
+    <section id="contact" aria-labelledby="contact-title" className="bg-cream-deep pb-12 pt-24 md:pb-16 md:pt-32">
       <div className="container-page grid gap-14 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
-          <p className="eyebrow flex items-center gap-3 text-muted">
-            <span className="text-chilli">09</span>
-            <span aria-hidden className="h-px w-8 bg-current opacity-40" />
-            Talk to us
-          </p>
           <h2
             id="contact-title"
-            className="mt-5 font-display text-[clamp(2.3rem,5.6vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.035em] text-balance"
+            data-split=""
+            className="font-display text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold leading-[1.02] tracking-[-0.035em] text-balance text-charcoal"
           >
             Ready to let your customers <Accent>see before they order?</Accent>
           </h2>
-          <p className="mt-6 max-w-[44ch] text-[1.05rem] leading-relaxed text-muted">
+          <p className="mt-6 max-w-[44ch] text-[1.05rem] leading-relaxed text-ink/80">
             Tell us about your restaurant. We’ll talk through your menu and show you what {siteConfig.name} could look
             like for your dishes.
           </p>
@@ -29,7 +25,7 @@ export function ContactSection() {
               Or call / message{" "}
               <a
                 href={`tel:+${siteConfig.contact.whatsappNumber}`}
-                className="font-medium text-ink underline decoration-line underline-offset-4"
+                className="font-semibold text-teal underline decoration-orange decoration-2"
               >
                 {siteConfig.contact.whatsappDisplay}
               </a>
@@ -37,8 +33,8 @@ export function ContactSection() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] bg-paper p-6 shadow-[0_40px_80px_-50px_rgb(60_30_10/0.45)] ring-1 ring-line sm:p-8 md:p-10 lg:col-span-7">
-          <h3 className="font-display text-2xl font-semibold tracking-[-0.02em]">
+        <div className="relative rounded-[2rem] bg-white p-6 shadow-[0_40px_80px_-50px_rgb(0_68_61/0.45)] ring-1 ring-line sm:p-8 md:p-10 lg:col-span-7 lg:mt-0">
+          <h3 className="font-display text-2xl font-bold tracking-[-0.02em] text-charcoal">
             Bring {siteConfig.name} to your restaurant
           </h3>
           <p className="mt-1 text-sm text-muted">A few details, and we’ll pick it up on WhatsApp.</p>

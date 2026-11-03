@@ -128,7 +128,7 @@ export default function PrivacyPage() {
 
               <footer className="pt-10">
                 <p className="font-medium text-ink">
-                  {siteConfig.name} by {siteConfig.company}
+                  {siteConfig.name}
                 </p>
                 <p className="mt-1 font-serif text-2xl italic text-chilli">“{siteConfig.tagline}”</p>
               </footer>

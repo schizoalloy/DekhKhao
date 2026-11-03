@@ -1,29 +1,42 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/*  Design tokens                                                      */
+/*  Design tokens: the DekhKhao brand identity (2026-11)               */
 /* ------------------------------------------------------------------ */
 @theme {
-  --color-paper: #f3ece1;
-  --color-paper-deep: #e8dccb;
-  --color-ink: #1b1714;
-  --color-ink-soft: #2a241f;
-  --color-muted: #6a5f55;
-  --color-line: rgb(27 23 20 / 0.14);
+  /* Brand palette */
+  --color-teal: #005f56;        /* Dekh Teal: fields, primary buttons */
+  --color-teal-deep: #00443d;
+  --color-teal-soft: #d9e9e5;
+  --color-orange: #ff6b00;      /* Khao Orange: shapes, swooshes, icon fills (never small text) */
+  --color-orange-ink: #b84700;  /* orange that reads as text on cream */
+  --color-yellow: #f7c600;      /* Zest Yellow: highlighter, sparks, shapes */
+  --color-pink: #e6007a;        /* Pop Pink: the two dots, tiny accents only */
+  --color-cream: #faf9f4;
+  --color-cream-deep: #f3ecdd;  /* the arch shape on the brand sheet */
+  --color-charcoal: #2b2b2b;
 
-  /* One accent: a warm chilli-terracotta. Saffron is reserved for food. */
-  --color-chilli: #c2412a;
-  --color-chilli-deep: #9e3220;
-  --color-saffron: #e3a23b;
-  --color-leaf: #24352b;
+  /* Semantic names used across the app; mapped onto the brand */
+  --color-paper: #faf9f4;
+  --color-paper-deep: #f3ecdd;
+  --color-ink: #2b2b2b;
+  --color-ink-soft: #3d3d3b;
+  --color-muted: #5c5b55;
+  --color-line: rgb(43 43 43 / 0.13);
+  --color-chilli: #b84700;
+  --color-chilli-deep: #8f3700;
+  --color-saffron: #f7c600;
+  --color-leaf: #005f56;
 
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-geist), ui-sans-serif, sans-serif;
-  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  /* Handwritten accent voice (taglines, asides). Never for body copy. */
+  --font-hand: var(--font-caveat), "Segoe Print", cursive;
+  --font-serif: var(--font-caveat), "Segoe Print", cursive;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-urdu: var(--font-gulzar), "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ------------------------------------------------------------------ */
@@ -32,9 +45,10 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 5.5rem;
     -webkit-text-size-adjust: 100%;
     background: var(--color-paper);
+    scrollbar-color: var(--color-teal) var(--color-cream-deep);
   }
 
   body {
@@ -44,17 +58,23 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
+    caret-color: var(--color-orange);
   }
 
   ::selection {
-    background: var(--color-chilli);
-    color: var(--color-paper);
+    background: var(--color-yellow);
+    color: var(--color-charcoal);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-chilli);
+    outline: 3px solid var(--color-orange);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 6px;
+  }
+
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1.5px;
   }
 
   summary {
@@ -65,32 +85,22 @@
   }
 }
 
-/* ------------------------------------------------------------------ */
-/*  Urdu brand typography                                              */
-/*  Nastaliq needs generous line-height and must never be letter-spaced */
-/* ------------------------------------------------------------------ */
-@utility urdu {
-  font-family: var(--font-urdu);
-  direction: rtl;
-  unicode-bidi: isolate;
-  letter-spacing: 0 !important;
-  line-height: 1.9;
-  font-feature-settings: normal;
-  font-kerning: normal;
+/* Highlighter stroke behind a phrase, like "real size" on the brand sheet */
+@utility highlight {
+  background-image: linear-gradient(transparent 42%, var(--color-yellow) 42%, var(--color-yellow) 88%, transparent 88%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  padding-inline: 0.12em;
+  margin-inline: -0.06em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
-/* Film grain — fixed, never on a scrolling layer */
-@utility grain {
-  &::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 60;
-    opacity: 0.07;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  }
+@utility hand {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.05;
 }
 
 @utility container-page {
@@ -107,9 +117,10 @@
 }
 
 @utility eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -151,22 +162,52 @@
   }
 }
 
-/* Hero entrance — CSS so the copy is server-rendered and visible without JS */
-@keyframes rise {
-  from { opacity: 0; transform: translate3d(0, 0.35em, 0); }
-  to { opacity: 1; transform: none; }
+/* On the menu app's dark theme the teal piece of the mark swaps to cream so it stays visible */
+@media (prefers-color-scheme: dark) {
+  .menu path[data-layer="teal"] { fill: #faf9f4; }
 }
-@keyframes wipe-rtl {
-  from { clip-path: inset(-60% 0 -60% 100%); opacity: 0.2; }
-  to { clip-path: inset(-60% -10% -60% -10%); opacity: 1; }
+
+/* Hero intro (components/motion/HeroMotion.tsx): its pieces start hidden only when JS has
+   flagged that it will animate them. If the script never runs, they appear after 3.4 s. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js-motion [data-h] {
+    visibility: hidden;
+    animation: reveal-fallback 0s 3.4s forwards;
+  }
 }
-.hero-rise {
-  animation: rise 1s var(--ease-out-expo) both;
-  animation-delay: calc(var(--d, 0) * 1ms);
+@keyframes reveal-fallback {
+  to { visibility: visible; }
 }
-.hero-wipe {
-  animation: wipe-rtl 1.3s var(--ease-out-expo) both;
-  animation-delay: calc(var(--d, 0) * 1ms);
+
+/* Lenis smooth scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* FAQ: answers open and close smoothly where the browser supports animating to auto */
+:root {
+  interpolate-size: allow-keywords;
+}
+details::details-content {
+  block-size: 0;
+  overflow-y: clip;
+  transition: block-size 0.45s var(--ease-out-expo), content-visibility 0.45s allow-discrete;
+}
+details[open]::details-content {
+  block-size: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content { transition: none; }
 }
 
 /* Restaurant table surface — photographed wood texture (see content/assets.manifest.json) */
@@ -186,36 +227,36 @@
 /*  follows the phone, because restaurants are often dim.               */
 /* ------------------------------------------------------------------ */
 .menu {
-  --m-bg: #f3ece1;
-  --m-surface: #faf6ef;
-  --m-stage: #e8dccb;
-  --m-text: #1b1714;
-  --m-muted: #675c52;
-  --m-line: rgb(27 23 20 / 0.12);
-  --m-button: #1b1714;
-  --m-button-text: #f3ece1;
+  --m-bg: #faf9f4;
+  --m-surface: #ffffff;
+  --m-stage: #f3ecdd;
+  --m-text: #2b2b2b;
+  --m-muted: #5c5b55;
+  --m-line: rgb(43 43 43 / 0.12);
+  --m-button: #005f56;
+  --m-button-text: #faf9f4;
   /* Restaurant accent, set per restaurant; small highlights only */
-  --m-accent: var(--restaurant-accent, #b3391f);
+  --m-accent: var(--restaurant-accent, #b84700);
   background: var(--m-bg);
   color: var(--m-text);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   .menu {
-    --m-bg: #141110;
-    --m-surface: #1e1a17;
-    --m-stage: #26211d;
-    --m-text: #f3ece1;
-    --m-muted: #b4a898;
-    --m-line: rgb(243 236 225 / 0.12);
-    --m-button: #f3ece1;
-    --m-button-text: #141110;
-    --m-accent: color-mix(in oklab, var(--restaurant-accent, #c2412a) 72%, white);
+    --m-bg: #0f1716;
+    --m-surface: #182221;
+    --m-stage: #1d2a28;
+    --m-text: #faf9f4;
+    --m-muted: #a9b6b2;
+    --m-line: rgb(250 249 244 / 0.12);
+    --m-button: #f7c600;
+    --m-button-text: #1f1b00;
+    --m-accent: color-mix(in oklab, var(--restaurant-accent, #ff6b00) 78%, white);
     color-scheme: dark;
   }
   html:has(.menu),
   html:has(.menu) body {
-    background: #141110;
+    background: #0f1716;
   }
 }
 

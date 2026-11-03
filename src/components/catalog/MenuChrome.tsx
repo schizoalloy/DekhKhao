@@ -53,7 +53,7 @@ export function MenuFooter() {
     <footer className="mx-auto max-w-5xl px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-16 text-sm text-m-muted sm:px-6">
       <div className="flex flex-col gap-4 border-t border-m-line pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          <span className="font-semibold text-m-text">{siteConfig.name}</span> by {siteConfig.company}
+          <span className="font-semibold text-m-text">{siteConfig.name}</span>
           <span className="block text-xs">{siteConfig.tagline}</span>
         </p>
         <nav aria-label="About this menu" className="flex gap-5 text-xs">

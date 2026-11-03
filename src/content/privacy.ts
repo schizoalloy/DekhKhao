@@ -9,9 +9,8 @@ export type PolicySection = { n: number; title: string; blocks: PolicyBlock[] };
 export const policyUpdated = "September 27, 2026";
 
 export const policyIntro: PolicyBlock[] = [
-  { p: "DekhKhao (“DekhKhao”, “we”, “us”, or “our”) is a product of Portive Technologies." },
   {
-    p: "DekhKhao provides technology that allows restaurant customers to visualize food and menu items using their smartphones, including through augmented reality (AR). Our service is designed to help customers understand what a food item may look like and how it may appear in a real-world setting before ordering it from the restaurant.",
+    p: "DekhKhao (“DekhKhao”, “we”, “us”, or “our”) provides technology that allows restaurant customers to visualize food and menu items using their smartphones, including through augmented reality (AR). Our service is designed to help customers understand what a food item may look like and how it may appear in a real-world setting before ordering it from the restaurant.",
   },
   {
     p: "This Privacy Policy explains what information may be collected when you visit or use the DekhKhao website or a restaurant experience powered by DekhKhao, how that information may be used, and the choices available to you.",
@@ -285,7 +284,7 @@ export const policySections: PolicySection[] = [
         ul: [
           "Comply with applicable law or a valid legal process.",
           "Respond to lawful requests from government authorities.",
-          "Protect the rights, property, or safety of DekhKhao, Portive Technologies, our users, restaurants, or others.",
+          "Protect the rights, property, or safety of DekhKhao, our users, restaurants, or others.",
           "Investigate fraud, security incidents, or abuse.",
           "Establish or defend legal claims.",
         ],
@@ -457,7 +456,7 @@ export const policySections: PolicySection[] = [
     title: "Business Transfers",
     blocks: [
       {
-        p: "If Portive Technologies or the DekhKhao business is involved in a merger, acquisition, restructuring, financing, sale of assets, or similar transaction, information associated with the service may be transferred as part of that transaction, subject to applicable law.",
+        p: "If DekhKhao is involved in a merger, acquisition, restructuring, financing, sale of assets, or similar transaction, information associated with the service may be transferred as part of that transaction, subject to applicable law.",
       },
       { p: "Where required, appropriate notice will be provided." },
     ],
@@ -502,7 +501,7 @@ export const policySections: PolicySection[] = [
       {
         p: "If you have questions, concerns, requests, or complaints regarding this Privacy Policy or the way DekhKhao handles information, please contact us.",
       },
-      { p: "DekhKhao\nA product of Portive Technologies\nWhatsApp / Phone: +92 335 3989333" },
+      { p: "DekhKhao\nWhatsApp / Phone: +92 335 3989333" },
       { p: "You may contact us regarding:" },
       {
         ul: [

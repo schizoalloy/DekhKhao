@@ -20,7 +20,7 @@ export function SizeComparator() {
     <div>
       <div className="table-surface relative aspect-square w-full overflow-hidden rounded-[2rem]">
         {/* scale ruler */}
-        <div className="absolute inset-x-[5%] bottom-[5%] flex items-center justify-between font-mono text-[0.6rem] text-paper/60 sm:text-xs">
+        <div className="absolute inset-x-[5%] bottom-[5%] flex items-center justify-between text-[0.62rem] font-semibold tabular-nums text-cream/70 sm:text-xs">
           <span>0</span>
           <span className="mx-2 h-px flex-1 bg-paper/30" />
           <span>{TABLE_IN} in</span>
@@ -34,7 +34,7 @@ export function SizeComparator() {
         >
           <div className="h-full w-full rounded-[0.75rem] bg-[#2a2522]" />
         </div>
-        <span className="eyebrow absolute left-[5%] top-[5%] text-[0.55rem] text-paper/60 sm:text-[0.65rem]">Phone shown for scale</span>
+        <span className="hand absolute left-[5%] top-[4%] text-[1.1rem] text-cream/85 sm:text-[1.35rem]">Phone shown for scale</span>
 
         {/* pizza — drawn at 14", scaled down (transform only) for smaller sizes */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -61,14 +61,14 @@ export function SizeComparator() {
               <span className="h-4 w-0.5 bg-paper" />
             </div>
           </motion.div>
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[160%] rounded-full bg-paper px-3 py-1 font-mono text-xs text-ink shadow">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[160%] rounded-full bg-cream px-3 py-1 text-xs font-bold tabular-nums text-charcoal shadow">
             {size} in
           </span>
         </div>
       </div>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
-        <div role="radiogroup" aria-label="Choose pizza size" className="grid grid-cols-3 gap-1 rounded-full bg-ink p-1">
+        <div role="radiogroup" aria-label="Choose pizza size" className="grid grid-cols-3 gap-1 rounded-full bg-teal p-1">
           {SIZES.map((s) => (
             <button
               key={s}
@@ -76,12 +76,12 @@ export function SizeComparator() {
               role="radio"
               aria-checked={s === size}
               onClick={() => setSize(s)}
-              className="relative min-h-12 min-w-20 rounded-full px-4 text-sm font-medium text-paper"
+              className={`relative min-h-12 min-w-20 rounded-full px-4 text-sm font-bold transition-colors ${s === size ? "text-charcoal" : "text-cream"}`}
             >
               {s === size && (
                 <motion.span
                   layoutId="cmp-size"
-                  className="absolute inset-0 rounded-full bg-chilli"
+                  className="absolute inset-0 rounded-full bg-yellow"
                   transition={{ type: "spring", stiffness: 300, damping: 26 }}
                 />
               )}
@@ -89,13 +89,13 @@ export function SizeComparator() {
             </button>
           ))}
         </div>
-        <dl className="grid grid-cols-2 gap-4 font-mono text-sm" aria-live="polite">
+        <dl className="grid grid-cols-2 gap-4 text-sm tabular-nums" aria-live="polite">
           <div>
-            <dt className="eyebrow text-muted">Surface</dt>
+            <dt className="text-xs font-semibold text-muted">Surface</dt>
             <dd className="mt-1 text-lg text-ink">{Math.round(area(size))} sq in</dd>
           </div>
           <div>
-            <dt className="eyebrow text-muted">vs. a 10-inch</dt>
+            <dt className="text-xs font-semibold text-muted">vs. a 10-inch</dt>
             <dd className="mt-1 text-lg text-ink">{ratio.toFixed(2)}×</dd>
           </div>
         </dl>

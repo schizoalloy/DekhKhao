@@ -1,40 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono, Gulzar, Instrument_Serif } from "next/font/google";
+import { Caveat, Geist_Mono, Sora } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { textures } from "@/content/assets";
 import { MotionProvider } from "@/components/MotionProvider";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
-const bricolage = Bricolage_Grotesque({
-  axes: ["opsz", "wdth"],
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  display: "swap",
-});
-const instrument = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-instrument",
-  display: "swap",
-});
-// Nastaliq display face for the Urdu wordmark. Only the Arabic subset is needed.
-const gulzar = Gulzar({
-  subsets: ["arabic"],
-  weight: "400",
-  variable: "--font-gulzar",
-  display: "swap",
-  preload: true,
-});
+// Brand type: Sora for headlines, UI and body; Caveat for handwritten taglines and asides.
+const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
+const caveat = Caveat({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-caveat", display: "swap" });
+// Measurements and admin data only.
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: siteConfig.title,
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  authors: [{ name: siteConfig.company }],
+  authors: [{ name: siteConfig.name }],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -52,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f3ece1",
+  themeColor: "#faf9f4",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -62,11 +44,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
+      // js-motion is added before paint by the script below; it lets the hero intro start hidden
+      suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${geist.variable} ${geistMono.variable} ${bricolage.variable} ${instrument.variable} ${gulzar.variable}`}
+      className={`${sora.variable} ${caveat.variable} ${geistMono.variable}`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-motion')" }} />
+      </head>
       <body
-        className="grain min-h-[100dvh]"
+        className="min-h-[100dvh]"
         // Table texture comes from the asset registry so it can be swapped in one place.
         style={{ ["--table-texture" as string]: `url("${textures.table.src}")` }}
       >

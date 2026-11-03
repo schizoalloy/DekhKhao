@@ -21,3 +21,6 @@ public/qr/*.dev.*
 .env*
 # ...but keep the template of variable names (no values) in Git
 !.env.example
+
+# impeccable review captures (large, regenerated per review)
+.impeccable/review/*.png

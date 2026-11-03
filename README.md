@@ -1,6 +1,6 @@
 # DekhKhao
 
-**DekhKhao** (دیکھ کھاؤ) by Portive Technologies. _What you see is what you get._
+**DekhKhao** (دیکھ کھاؤ). _What you see is what you get._
 
 One Next.js project, three parts:
 

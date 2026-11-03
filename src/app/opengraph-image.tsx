@@ -1,5 +1,9 @@
 import { ImageResponse } from "next/og";
 import { siteConfig } from "@/config/site";
+import { logoMark } from "@/components/brand/art";
+
+const order = ["yellow", "orange", "teal", "pink"];
+const layers = [...logoMark.layers].sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
 
 export const alt = "DekhKhao — What you see is what you get.";
 export const size = { width: 1200, height: 630 };
@@ -14,51 +18,29 @@ export default async function Image() {
           width: "100%",
           height: "100%",
           display: "flex",
-          background: "#f3ece1",
-          color: "#1b1714",
+          background: "#FAF9F4",
+          color: "#2B2B2B",
           padding: 72,
           fontFamily: "sans-serif",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1 }}>
-          <div style={{ fontSize: 22, letterSpacing: 4, textTransform: "uppercase", color: "#6a5f55" }}>
-            3D + AR menus for restaurants
+          <div style={{ fontSize: 26, fontWeight: 600, color: "#005F56" }}>
+            See food at its real size, before you order
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 132, fontWeight: 800, letterSpacing: -5, lineHeight: 0.9 }}>{siteConfig.name}</div>
-            <div style={{ fontSize: 46, marginTop: 26, color: "#c2412a", fontStyle: "italic" }}>{siteConfig.tagline}</div>
+            <div style={{ fontSize: 132, fontWeight: 800, letterSpacing: -5, lineHeight: 0.9, color: "#005F56" }}>{siteConfig.name}</div>
+            <div style={{ fontSize: 40, marginTop: 26, color: "#B84700" }}>{siteConfig.tagline}</div>
           </div>
-          <div style={{ fontSize: 22, color: "#6a5f55" }}>{`by ${siteConfig.company}`}</div>
+          <div style={{ fontSize: 22, color: "#5C5B55" }}>AR food previews for restaurants. Fully managed, no app to download.</div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 380 }}>
-          <div
-            style={{
-              width: 340,
-              height: 340,
-              borderRadius: 999,
-              background: "radial-gradient(circle at 50% 46%, #f4cf73 0%, #e2a948 62%, #b63a22 66%, #d9954a 72%, #a8622a 100%)",
-              display: "flex",
-              boxShadow: "0 40px 60px -20px rgba(60,30,10,0.45)",
-              position: "relative",
-            }}
-          >
-            {[
-              [120, 80], [200, 96], [84, 160], [168, 164], [236, 176], [120, 236], [196, 244],
-            ].map(([x, y], i) => (
-              <div
-                key={i}
-                style={{
-                  position: "absolute",
-                  left: x,
-                  top: y,
-                  width: 40,
-                  height: 40,
-                  borderRadius: 999,
-                  background: "radial-gradient(circle at 40% 38%, #c8472c, #7a2012)",
-                }}
-              />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 420 }}>
+          {/* the geometric Urdu mark, traced from the brand sheet */}
+          <svg width="380" height="402" viewBox={logoMark.viewBox}>
+            {layers.map((l) => (
+              <path key={l.name} d={l.d} fill={l.fill} fillRule="evenodd" />
             ))}
-          </div>
+          </svg>
         </div>
       </div>
     ),
