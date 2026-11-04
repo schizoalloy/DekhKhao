@@ -6,8 +6,8 @@
  *   npm run menus:sync -- --write make R2 match the database
  *
  * Publishing and unpublishing keep the two in step. Use this after a publish reported that the
- * live menu couldn't be updated, or to rebuild the copies from the database. Never prints
- * credentials.
+ * live menu couldn't be updated, or to rebuild the copies from the database. Customer pages pick
+ * up a change made here within 5 minutes (their cache). Never prints credentials.
  */
 import { DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "@supabase/supabase-js";

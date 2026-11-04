@@ -83,8 +83,9 @@ const loadSnapshot = (slug: string) =>
       }
     },
     ["live-menu", slug],
-    // Publishing expires the tag straight away; the hour is only a safety net.
-    { tags: [menuTag(slug)], revalidate: 3600 },
+    // Publishing from the live admin expires the tag straight away. A copy changed anywhere else
+    // (the admin on another deployment or a laptop, `npm run menus:sync`) shows within 5 minutes.
+    { tags: [menuTag(slug)], revalidate: 300 },
   )();
 
 export async function getPublishedRestaurant(slug: string): Promise<Restaurant | null> {
