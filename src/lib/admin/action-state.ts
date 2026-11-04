@@ -1,6 +1,10 @@
 /** What an admin server action reports back to its form. */
 export type ActionState = { ok: true; message?: string } | { ok: false; error: string; problems?: string[] } | null;
 
+/** When Supabase doesn't answer: usually the free project was paused after a quiet week. */
+export const DATABASE_UNREACHABLE =
+  "The database isn't responding. Supabase pauses it after about a week without use: open the Supabase dashboard, select the dekhkhao project and click Restore project, then try again in a few minutes. Live menus keep working meanwhile.";
+
 /** Postgres / PostgREST error codes turned into sentences for the admin. */
 export function friendlyDbError(
   error: { code?: string; message: string },

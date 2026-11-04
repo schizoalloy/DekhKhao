@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { signIn } from "@/app/admin/actions/auth";
 import { ActionForm, SubmitButton } from "@/components/admin/ActionForm";
+import { DATABASE_UNREACHABLE } from "@/lib/admin/action-state";
 import { ui } from "@/components/admin/styles";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { siteConfig } from "@/config/site";
@@ -20,6 +21,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         {error === "not-admin" && (
           <p role="alert" className="mt-4 rounded-2xl bg-chilli/10 px-4 py-3 text-sm text-chilli-deep">
             You&apos;re signed in, but this account doesn&apos;t have admin access.
+          </p>
+        )}
+        {error === "unreachable" && (
+          <p role="alert" className="mt-4 rounded-2xl bg-chilli/10 px-4 py-3 text-sm text-chilli-deep">
+            {DATABASE_UNREACHABLE}
           </p>
         )}
         <ActionForm action={signIn} className="mt-6 space-y-4">

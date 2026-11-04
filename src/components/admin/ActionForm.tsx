@@ -15,10 +15,22 @@ export function ActionForm({
   children: ReactNode;
   className?: string;
 }) {
-  const [state, formAction] = useActionState(action, null);
+  const [state, formAction, pending] = useActionState(action, null);
   return (
     <form action={formAction} className={className}>
       {children}
+      {!pending && <ActionResult state={state} />}
+    </form>
+  );
+}
+
+/**
+ * An action's error (with any listed problems) or success message. Hide it while the action runs
+ * again, so an old result never reads as the new one.
+ */
+export function ActionResult({ state }: { state: ActionState }) {
+  return (
+    <>
       {state && !state.ok && (
         <div role="alert" className="mt-3 rounded-2xl bg-chilli/10 px-4 py-3 text-sm text-chilli-deep">
           <p>{state.error}</p>
@@ -36,28 +48,33 @@ export function ActionForm({
           {state.message}
         </p>
       )}
-    </form>
+    </>
   );
 }
+
+const BUTTON = { primary: ui.button, secondary: ui.buttonSecondary, danger: ui.buttonDanger, destroy: ui.buttonDestroy };
 
 export function SubmitButton({
   children,
   variant = "primary",
   confirm,
+  disabled = false,
   className = "",
 }: {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "danger";
+  /** "destroy" is the solid red final button of a Danger Zone action. */
+  variant?: keyof typeof BUTTON;
   /** Asks before submitting, for actions that are hard to undo. */
   confirm?: string;
+  disabled?: boolean;
   className?: string;
 }) {
   const { pending } = useFormStatus();
-  const style = variant === "danger" ? ui.buttonDanger : variant === "secondary" ? ui.buttonSecondary : ui.button;
+  const style = BUTTON[variant];
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       aria-busy={pending}
       className={`${style} ${className}`}
       onClick={(e) => {

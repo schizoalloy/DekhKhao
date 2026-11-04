@@ -1,18 +1,18 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { menuTag } from "@/catalog/published";
 import { requireAdmin } from "@/lib/admin/auth";
 import { friendlyDbError, type ActionState } from "@/lib/admin/action-state";
 import { keysInSnapshot, removeOrphanFiles, removeStalePublicFiles } from "@/lib/admin/files";
-import { deletePublicFile, publishFile } from "@/lib/r2";
+import { refreshMenu, takeMenuOffline } from "@/lib/admin/live-menu";
+import { deletePublicFile, publishFile, writeLiveMenu } from "@/lib/r2";
 
 /**
- * Publish: copy the files the menu needs into the public bucket, then let the database's
- * publish_menu() validate everything and freeze the snapshot customers read. If the database
- * refuses, the files copied for this attempt are taken out again, so a failed publish never
- * leaves unpublished models public.
+ * Publish: copy the files the menu needs into the public bucket, let the database's publish_menu()
+ * validate everything and freeze the snapshot, then write that snapshot to the public bucket as
+ * the live menu customers read. If the database refuses, the files copied for this attempt are
+ * taken out again, so a failed publish never leaves unpublished models public.
  */
 export async function publishMenu(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { supabase } = await requireAdmin();
@@ -73,11 +73,23 @@ export async function publishMenu(_prev: ActionState, formData: FormData): Promi
     };
   }
 
+  const version = (published.snapshot as { version?: number }).version;
+  try {
+    await writeLiveMenu(restaurant.data.slug, published.snapshot);
+  } catch (e) {
+    // Customers still see the previous version, and its files are still public, so this is safe
+    // to retry. Stale files are only removed once the new copy is live.
+    revalidatePath("/admin", "layout");
+    return {
+      ok: false,
+      error: `Version ${version} is saved, but the live menu couldn't be updated (${e instanceof Error ? e.message : String(e)}). Publish again to retry.`,
+    };
+  }
+
   // Files the previous version used but this one doesn't come out of the public bucket.
   await removeStalePublicFiles(supabase, rid, keysInSnapshot(published.snapshot));
   await removeOrphanFiles(supabase, rid);
   refreshMenu(restaurant.data.slug);
-  const version = (published.snapshot as { version?: number }).version;
   return { ok: true, message: `Published${version ? ` version ${version}` : ""}. The live menu is updated.` };
 }
 
@@ -90,18 +102,11 @@ export async function unpublishMenu(_prev: ActionState, formData: FormData): Pro
 
   const { data: restaurant, error: loadError } = await supabase.from("restaurants").select("slug").eq("id", rid).single();
   if (loadError) return { ok: false, error: friendlyDbError(loadError) };
-  const { error } = await supabase.from("published_menus").delete().eq("restaurant_id", rid);
-  if (error) return { ok: false, error: friendlyDbError(error) };
 
-  await removeStalePublicFiles(supabase, rid, new Set());
+  // If a step fails part-way, pressing Unpublish again finishes it.
+  const problem = await takeMenuOffline(supabase, rid, restaurant.slug);
+  if (problem) return { ok: false, error: problem };
   await removeOrphanFiles(supabase, rid);
   refreshMenu(restaurant.slug);
   return { ok: true, message: "Unpublished. The menu link now shows “We couldn’t find this menu”." };
-}
-
-function refreshMenu(slug: string) {
-  revalidateTag(menuTag(slug), { expire: 0 });
-  revalidatePath(`/r/${slug}`, "layout");
-  revalidatePath(`/qr/${slug}`, "layout");
-  revalidatePath("/admin", "layout");
 }

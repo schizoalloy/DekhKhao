@@ -63,6 +63,7 @@ const id = randomUUID();
 const privateKey = `_healthcheck/${id}.txt`;
 const uploadKey = `_healthcheck/${id}-signed.glb`;
 const publicKey = `_healthcheck/${id}.txt`;
+const menuKey = `_healthcheck/${id}-menu.json`;
 const body = `dekhkhao r2 check ${new Date().toISOString()}`;
 
 console.log("-- private bucket (server) --");
@@ -156,12 +157,21 @@ await step("copy private -> public bucket", async () => {
   const h = await s3.send(new HeadObjectCommand({ Bucket: R2_PUBLIC_BUCKET, Key: publicKey }));
   return `${h.ContentLength} bytes, ${h.ContentType}`;
 });
+await step("write and read a live menu copy in the public bucket", async () => {
+  await s3.send(
+    new PutObjectCommand({ Bucket: R2_PUBLIC_BUCKET, Key: menuKey, Body: JSON.stringify({ check: id }), ContentType: "application/json" }),
+  );
+  const g = await s3.send(new GetObjectCommand({ Bucket: R2_PUBLIC_BUCKET, Key: menuKey }));
+  if (JSON.parse(await g.Body.transformToString()).check !== id) throw new Error("content mismatch");
+  return g.ContentType;
+});
 
 console.log("\n-- clean up --");
 await step("delete test objects", async () => {
   await s3.send(new DeleteObjectCommand({ Bucket: R2_PRIVATE_BUCKET, Key: privateKey }));
   await s3.send(new DeleteObjectCommand({ Bucket: R2_PRIVATE_BUCKET, Key: uploadKey }));
   await s3.send(new DeleteObjectCommand({ Bucket: R2_PUBLIC_BUCKET, Key: publicKey }));
+  await s3.send(new DeleteObjectCommand({ Bucket: R2_PUBLIC_BUCKET, Key: menuKey }));
 });
 await step("deleted objects are gone", async () => {
   try {

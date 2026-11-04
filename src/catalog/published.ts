@@ -2,12 +2,14 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { z } from "zod";
 import { publicAssetUrl } from "@/config/assets";
-import { createSupabasePublicClient } from "@/lib/supabase/public";
+import { isR2Configured, readLiveMenu } from "@/lib/r2";
 import type { Restaurant } from "./types";
 
 /**
- * Menus published from the admin console. Each one is a frozen snapshot written by the database's
- * publish_menu() (supabase/migrations), read with the anonymous key, so drafts can't leak here.
+ * Menus published from the admin console. The database's publish_menu() (supabase/migrations)
+ * freezes each one as a snapshot, and the publish action writes a copy of it to the public R2
+ * bucket. Customer pages read only that copy: drafts can't leak here, and menus stay up while the
+ * database is paused or unreachable.
  */
 
 /** Cache tag for one restaurant's published menu. Publishing and unpublishing expire it. */
@@ -72,13 +74,15 @@ function toRestaurant(raw: unknown): Restaurant {
 const loadSnapshot = (slug: string) =>
   unstable_cache(
     async () => {
-      const supabase = createSupabasePublicClient();
-      if (!supabase) return null;
-      const { data, error } = await supabase.from("published_menus").select("snapshot").eq("slug", slug).maybeSingle();
-      if (error) throw new Error(`Couldn't load the published menu for "${slug}": ${error.message}`);
-      return data?.snapshot ?? null;
+      // Without R2 settings only the built-in JSON menus exist.
+      if (!isR2Configured()) return null;
+      try {
+        return await readLiveMenu(slug);
+      } catch (e) {
+        throw new Error(`Couldn't load the live menu for "${slug}": ${e instanceof Error ? e.message : String(e)}`);
+      }
     },
-    ["published-menu", slug],
+    ["live-menu", slug],
     // Publishing expires the tag straight away; the hour is only a safety net.
     { tags: [menuTag(slug)], revalidate: 3600 },
   )();

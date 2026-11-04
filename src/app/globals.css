@@ -27,6 +27,9 @@
   --color-chilli-deep: #8f3700;
   --color-saffron: #f7c600;
   --color-leaf: #005f56;
+  /* Functional red, outside the brand palette: irreversible deletes in the admin only */
+  --color-danger: #b91c1c;
+  --color-danger-deep: #991b1b;
 
   --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;

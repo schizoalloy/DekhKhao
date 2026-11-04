@@ -8,6 +8,7 @@ import { createCategory, createItem, deleteCategory, updateCategory, updateResta
 import { publishMenu, unpublishMenu } from "@/app/admin/actions/publish";
 import { formatPrice } from "@/catalog/format";
 import { ActionForm, SubmitButton } from "@/components/admin/ActionForm";
+import { DangerZone } from "@/components/admin/DangerZone";
 import { FileUpload } from "@/components/admin/FileUpload";
 import { ui } from "@/components/admin/styles";
 import { catalogLabel, catalogUrl } from "@/config/app";
@@ -29,7 +30,7 @@ export default async function RestaurantAdminPage({ params }: Params) {
     supabase.from("restaurants").select("*").eq("id", restaurantId).maybeSingle(),
     supabase.from("menu_categories").select("*").eq("restaurant_id", restaurantId).order("position").order("created_at"),
     supabase.from("menu_items").select("*").eq("restaurant_id", restaurantId).order("position").order("created_at"),
-    supabase.from("assets").select("id, original_filename, byte_size, status, public_key").eq("restaurant_id", restaurantId),
+    supabase.from("assets").select("id, kind, original_filename, byte_size, status, public_key").eq("restaurant_id", restaurantId),
     supabase
       .from("published_menus")
       .select("published_at, version:snapshot->version")
@@ -304,6 +305,19 @@ export default async function RestaurantAdminPage({ params }: Params) {
           />
         </aside>
       </div>
+
+      <DangerZone
+        restaurantId={r.id}
+        name={r.name}
+        address={catalogLabel(r.slug)}
+        isLive={Boolean(live)}
+        counts={{
+          categories: categories.data.length,
+          items: items.data.length,
+          models: assets.data.filter((a) => a.kind !== "image").length,
+          files: assets.data.length,
+        }}
+      />
     </>
   );
 }

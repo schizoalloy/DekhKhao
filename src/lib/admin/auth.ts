@@ -13,7 +13,8 @@ export async function requireAdmin() {
   const userId = data?.claims?.sub;
   if (!userId) redirect("/admin/login");
 
-  const { data: admin } = await supabase.from("platform_admins").select("user_id").eq("user_id", userId).maybeSingle();
+  const { data: admin, error } = await supabase.from("platform_admins").select("user_id").eq("user_id", userId).maybeSingle();
+  if (error) redirect("/admin/login?error=unreachable");
   if (!admin) redirect("/admin/login?error=not-admin");
 
   return { supabase, userId, email: (data.claims.email as string | undefined) ?? null };

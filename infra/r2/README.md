@@ -5,7 +5,7 @@ Two buckets, both with the `apac` location hint:
 | Bucket | Holds | Public? |
 | --- | --- | --- |
 | `dekhkhao-assets` | Every upload from the admin console (drafts and originals). Admin previews use short-lived signed URLs. | Never |
-| `dekhkhao-public` | Copies of the files a published menu uses, made when a menu is published and removed when it stops being used. | Only once a delivery domain is approved and connected |
+| `dekhkhao-public` | Copies of the files a published menu uses, made when a menu is published and removed when it stops being used. Plus `menus/<slug>.json`, the live copy of each published menu that customer pages read (through the S3 API, not the public URL). | Through its public URL (r2.dev today; a custom domain for production) |
 
 The app reaches both through the S3 API with one R2 token limited to **Object Read & Write** on these two buckets
 (`R2_*` variables in `.env.example`). Bucket settings are managed with Wrangler, logged in on an admin's machine,

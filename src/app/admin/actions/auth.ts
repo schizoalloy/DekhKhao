@@ -1,8 +1,9 @@
 "use server";
 
+import { isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import type { ActionState } from "@/lib/admin/action-state";
+import { DATABASE_UNREACHABLE, type ActionState } from "@/lib/admin/action-state";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const Credentials = z.object({ email: z.email(), password: z.string().min(1) });
@@ -18,8 +19,9 @@ export async function signIn(_prev: ActionState, formData: FormData): Promise<Ac
     console.error(`[admin] sign-in failed: ${error.code ?? "no code"} (HTTP ${error.status ?? "?"}): ${error.message}`);
     return {
       ok: false,
-      error:
-        error.code === "invalid_credentials"
+      error: isAuthRetryableFetchError(error)
+        ? DATABASE_UNREACHABLE
+        : error.code === "invalid_credentials"
           ? "That email and password don't match an account."
           : error.status === 429
             ? "Too many attempts. Wait a few minutes and try again."
@@ -29,7 +31,12 @@ export async function signIn(_prev: ActionState, formData: FormData): Promise<Ac
     };
   }
 
-  const { data: admin } = await supabase.from("platform_admins").select("user_id").eq("user_id", data.user.id).maybeSingle();
+  const { data: admin, error: adminError } = await supabase
+    .from("platform_admins")
+    .select("user_id")
+    .eq("user_id", data.user.id)
+    .maybeSingle();
+  if (adminError) return { ok: false, error: DATABASE_UNREACHABLE };
   if (!admin) {
     await supabase.auth.signOut();
     return { ok: false, error: "This account doesn't have admin access." };

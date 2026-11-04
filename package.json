@@ -13,6 +13,7 @@
     "qr": "node scripts/generate-qr.mjs",
     "db:test": "node supabase/tests/schema.test.mjs",
     "r2:check": "node --env-file=.env.local scripts/check-r2.mjs",
+    "menus:sync": "node --env-file=.env.local scripts/sync-live-menus.mjs",
     "db:types": "supabase gen types typescript --linked --schema public > src/lib/supabase/database.types.ts"
   },
   "dependencies": {

@@ -19,6 +19,7 @@ npm run build
 npm run typecheck
 npm run db:test    # schema + RLS tests on an in-memory Postgres (no Docker)
 npm run r2:check   # checks the R2 credentials in .env.local
+npm run menus:sync # checks the live menu copies in R2 match the database (--write fixes them)
 ```
 
 ## How it fits together
@@ -29,15 +30,20 @@ admin.dekhkhao.com (signed in) ── server actions ──► Supabase: drafts 
    └──► browser uploads straight to R2 dekhkhao-assets (private) → server checks the file's first bytes
 
 Publish ──► copy the files the menu uses to R2 dekhkhao-public ──► publish_menu() validates and freezes
-            a JSON snapshot ──► the restaurant's pages are revalidated
+            a JSON snapshot ──► the snapshot is written to dekhkhao-public as menus/<slug>.json
+            ──► the restaurant's pages are revalidated
 
-<slug>.dekhkhao.com ──► src/proxy.ts maps it to /r/<slug> ──► reads only the published snapshot
-                         (anonymous key) ──► <model-viewer> loads the GLB/USDZ from the public bucket
+<slug>.dekhkhao.com ──► src/proxy.ts maps it to /r/<slug> ──► reads menus/<slug>.json from R2 (never the
+                         database) ──► <model-viewer> loads the GLB/USDZ from the public bucket
 ```
 
 - **Drafts never leak.** Anonymous visitors have no access to the working tables at all, only to
   `published_menus`, which only `publish_menu()` writes. If publishing fails, files copied for it are removed again.
-- **No privileged keys in the app.** Admin writes run as the signed-in admin under RLS; public reads use the
+- **Menus don't depend on the database.** Customer pages read the live copy in R2, so QR menus keep working while
+  Supabase is paused (free projects pause after about a week without use) or down. Only the admin needs it: when
+  it says the database isn't responding, open the Supabase dashboard and click **Restore project**.
+  `published_menus` stays the record of what's live; `npm run menus:sync` reports any difference with R2.
+- **No privileged keys in the app.** Admin reads and writes run as the signed-in admin under RLS, with the
   publishable key. The Supabase secret key isn't used. The R2 token can only read/write objects in the two buckets.
 - **Sign-up is off.** Admin users are created in the Supabase dashboard, then made admin with one SQL statement:
   `insert into public.platform_admins (user_id) select id from auth.users where email = '<email>';`
@@ -57,16 +63,16 @@ src/
   catalog/
     types.ts           Restaurant / CatalogItem / ModelAsset / ModelScale
     restaurants/       built-in JSON menus (the demo) + index.ts registry
-    published.ts       published menus from Supabase, cached until the next publish
+    published.ts       published menus (the live copies in R2), cached until the next publish
     data.ts            async data access: JSON first, then published menus
   config/app.ts        addresses: subdomain vs path mode, catalog/QR URL helpers
   config/assets.ts     public URL of published files
   components/catalog/  menu header/footer, item card, 3D viewer + AR logic, desktop phone hand-off
   components/admin/    admin forms and the upload button
   config/site.ts       name, Urdu name, tagline, WhatsApp number, base URL resolution
-  lib/supabase/        server, public and generated-types clients
+  lib/supabase/        server client (admin) and generated types
   lib/admin/           admin auth check, upload rules, file checks and cleanup
-  lib/r2.ts            R2 access (server only): signed URLs, publish copies, deletes
+  lib/r2.ts            R2 access (server only): signed URLs, publish copies, live menu copies, deletes
   lib/hosts.ts         which host is the landing page, admin, a restaurant or reserved
   content/
     copy.ts            problem / steps / benefits / FAQ copy
@@ -201,7 +207,20 @@ command (or reprint from `/qr/<slug>`) whenever the domain changes; a printed co
 3. **Publish.** It refuses with a list of problems if a visible item has no model or size, or a file failed its
    checks. Once published, `https://<slug>.dekhkhao.com` is live. Edits stay private until you publish again;
    **Unpublish** takes the menu offline. Files that the live menu stops using are removed from the public bucket.
+   If a publish says the live menu couldn't be updated, press Publish again (or run `npm run menus:sync -- --write`).
 4. Print the QR code from the restaurant's admin page, after checking the menu on real phones (below).
+
+**The Danger Zone**, at the bottom of each restaurant's page, holds the deletes that can't be undone. Each one asks
+for the exact text `Yes, go ahead and delete it` (checked again on the server, `src/app/admin/actions/danger.ts`):
+
+| Action | Deletes | Keeps |
+| --- | --- | --- |
+| Delete the whole menu | every category and item, their models and pictures (R2 and database); takes the menu offline | the restaurant, address, logo, settings, publish history |
+| Delete all AR models | every GLB and USDZ; takes the menu offline (it can't be live without models) | items, prices, pictures |
+| Delete this restaurant | the live menu copy, every file under `restaurants/<id>/` in both buckets, then the restaurant row (the database removes its categories, items, file records and history with it) | nothing |
+
+A deleted restaurant's address becomes free again. Printed QR codes for it stop working, and would open whichever
+restaurant takes the address next, so don't reuse an address whose QR codes are still on tables.
 
 The admin can't convert USDZ to GLB. If you only have a USDZ, convert it locally first (`scripts/usdz_to_gltf.py`,
 see step 4 of the JSON flow below) and upload both.

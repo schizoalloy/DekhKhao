@@ -8,7 +8,8 @@ import { requireAdmin } from "@/lib/admin/auth";
 
 export const metadata: Metadata = { title: "Restaurants" };
 
-export default async function AdminHome() {
+export default async function AdminHome({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
+  const { deleted } = await searchParams;
   const { supabase } = await requireAdmin();
   const [restaurants, published] = await Promise.all([
     supabase.from("restaurants").select("id, slug, name, updated_at").order("name"),
@@ -23,6 +24,11 @@ export default async function AdminHome() {
         <h1 id="restaurants-heading" className="font-display text-3xl font-semibold tracking-[-0.03em]">
           Restaurants
         </h1>
+        {deleted && (
+          <p role="status" className="mt-4 rounded-2xl bg-leaf/10 px-4 py-3 text-sm text-leaf">
+            Deleted “{deleted}” with its menu and all its files.
+          </p>
+        )}
         {restaurants.data.length === 0 ? (
           <p className="mt-6 rounded-3xl border border-dashed border-line p-8 text-center text-muted">
             No restaurants yet. Add the first one to start building its menu.
