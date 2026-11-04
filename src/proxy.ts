@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { rootDomain } from "@/config/app";
+import { ADMIN_ACTIVITY_COOKIE, activityCookie, isIdle } from "@/lib/admin/session";
 import { classifyHost } from "@/lib/hosts";
 
 /**
@@ -52,9 +53,9 @@ function isAdminPath(pathname: string) {
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
-/** Redirect to `path` on another host (or this one), keeping the query string. */
-function redirect(request: NextRequest, hostname: string, path: string, status: 307 | 308 = 307) {
-  const target = new URL(`${path}${request.nextUrl.search}`, `${request.nextUrl.protocol}//${hostname}`);
+/** Redirect to `path` on another host (or this one), keeping the query string unless `search` replaces it. */
+function redirect(request: NextRequest, hostname: string, path: string, status: 307 | 308 = 307, search = request.nextUrl.search) {
+  const target = new URL(`${path}${search}`, `${request.nextUrl.protocol}//${hostname}`);
   // Next.js turns a redirect to request.url's own origin into a relative one. When request.url
   // doesn't carry the host the browser asked for (local dev on *.localhost), that would keep the
   // browser on the wrong host, so send an immediate refresh to the absolute URL instead.
@@ -68,9 +69,10 @@ function redirect(request: NextRequest, hostname: string, path: string, status: 
 }
 
 /**
- * Refreshes the Supabase session cookie before an admin page renders, and sends signed-out
- * visitors to the login page. This is a convenience, not the security boundary: every admin page
- * and action checks the user again (src/lib/admin/auth.ts) and RLS has the final say.
+ * Refreshes the Supabase session cookie before an admin page renders, sends signed-out visitors to
+ * the login page, and ends sessions left idle for an hour (src/lib/admin/session.ts). The session
+ * check is a convenience, not the security boundary: every admin page and action checks the user
+ * again (src/lib/admin/auth.ts) and RLS has the final say.
  */
 async function adminSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -93,11 +95,24 @@ async function adminSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
-  if (!signedIn && request.nextUrl.pathname !== "/admin/login") {
-    const login = redirect(request, request.headers.get("host") ?? request.nextUrl.host, "/admin/login");
+  const onLogin = request.nextUrl.pathname === "/admin/login";
+  const host = request.headers.get("host") ?? request.nextUrl.host;
+  const toLogin = (search?: string) => {
+    const login = redirect(request, host, "/admin/login", 307, search);
     for (const cookie of response.cookies.getAll()) login.cookies.set(cookie);
     return login;
+  };
+
+  if (signedIn && isIdle(request.cookies.get(ADMIN_ACTIVITY_COOKIE)?.value)) {
+    // An hour without activity: Supabase revokes the session and its cookies are cleared.
+    await supabase.auth.signOut();
+    response.cookies.delete(ADMIN_ACTIVITY_COOKIE);
+    // On the login page itself, carry on: its sign-in form must still work.
+    return onLogin ? response : toLogin("?error=idle");
   }
+  if (!signedIn) return onLogin ? response : toLogin();
+
+  response.cookies.set(activityCookie(request.nextUrl.protocol === "https:"));
   return response;
 }
 

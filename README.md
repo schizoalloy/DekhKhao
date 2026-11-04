@@ -48,6 +48,13 @@ Publish ──► copy the files the menu uses to R2 dekhkhao-public ──► p
 - **Sign-up is off.** Admin users are created in the Supabase dashboard, then made admin with one SQL statement:
   `insert into public.platform_admins (user_id) select id from auth.users where email = '<email>';`
   (`npx supabase db query --linked "<sql>"`). `restaurant_members` is ready for restaurant accounts later.
+- **Two-step sign-in.** After the password, the admin enters a 6-digit code from an authenticator app (Supabase
+  Auth TOTP; linked by QR code at the first sign-in, `/admin/verify`). The database itself requires it:
+  `private.is_platform_admin()` only answers true for sessions at assurance level `aal2`, so a password alone can't
+  read or change anything, even through the Data API. After an hour without admin activity the session ends
+  (`src/lib/admin/session.ts`, enforced in `src/proxy.ts`) and the next sign-in needs both again.
+  **Lost the phone?** Remove the old factor in the Supabase dashboard's SQL editor, then sign in and link a new app:
+  `delete from auth.mfa_factors where user_id = (select id from auth.users where email = '<email>');`
 - **Infrastructure lives in the repo:** `supabase/` (migrations, auth config, tests), `infra/r2/` (bucket CORS and
   how to recreate the buckets), `vercel.json` (functions in Singapore, next to the database).
 

@@ -23,6 +23,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             You&apos;re signed in, but this account doesn&apos;t have admin access.
           </p>
         )}
+        {error === "idle" && (
+          <p role="status" className="mt-4 rounded-2xl bg-ink/5 px-4 py-3 text-sm text-ink-soft">
+            You were signed out after an hour without activity. Sign in again with your password and authenticator code.
+          </p>
+        )}
         {error === "unreachable" && (
           <p role="alert" className="mt-4 rounded-2xl bg-chilli/10 px-4 py-3 text-sm text-chilli-deep">
             {DATABASE_UNREACHABLE}

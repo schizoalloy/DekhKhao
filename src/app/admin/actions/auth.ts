@@ -1,9 +1,11 @@
 "use server";
 
 import { isAuthRetryableFetchError } from "@supabase/supabase-js";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { DATABASE_UNREACHABLE, type ActionState } from "@/lib/admin/action-state";
+import { ADMIN_ACTIVITY_COOKIE, activityCookie } from "@/lib/admin/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const Credentials = z.object({ email: z.email(), password: z.string().min(1) });
@@ -41,11 +43,16 @@ export async function signIn(_prev: ActionState, formData: FormData): Promise<Ac
     await supabase.auth.signOut();
     return { ok: false, error: "This account doesn't have admin access." };
   }
-  redirect("/admin");
+
+  // Starts the one-hour inactivity clock (src/lib/admin/session.ts), then the authenticator code.
+  const secure = (await headers()).get("x-forwarded-proto") === "https";
+  (await cookies()).set(activityCookie(secure));
+  redirect("/admin/verify");
 }
 
 export async function signOut() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
+  (await cookies()).delete(ADMIN_ACTIVITY_COOKIE);
   redirect("/admin/login");
 }

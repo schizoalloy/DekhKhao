@@ -25,8 +25,10 @@ await db.exec(`
   create table auth.users (id uuid primary key, email text);
   create function auth.uid() returns uuid language sql stable
     as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+  create function auth.jwt() returns jsonb language sql stable
+    as $$ select coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb $$;
   grant usage on schema auth to anon, authenticated;
-  grant execute on function auth.uid() to anon, authenticated;
+  grant execute on function auth.uid(), auth.jwt() to anon, authenticated;
   grant usage on schema public to anon, authenticated, service_role;
   alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
   alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
@@ -45,10 +47,16 @@ const U = {
 for (const [k, id] of Object.entries(U)) await db.query("insert into auth.users values ($1, $2)", [id, `${k}@test`]);
 await db.query("insert into public.platform_admins (user_id) values ($1)", [U.admin]);
 
+// Everyone signs in with two-factor (aal2) unless named here. "admin-password-only" is the admin's
+// account after the password but before the authenticator code (aal1).
+const SESSIONS = { "admin-password-only": ["admin", "aal1"] };
+
 async function as(who, sql, params = []) {
-  const role = who === "anon" ? "anon" : "authenticated";
-  const uid = who === "anon" ? "" : U[who];
+  const [user, aal] = SESSIONS[who] ?? [who, "aal2"];
+  const role = user === "anon" ? "anon" : "authenticated";
+  const uid = user === "anon" ? "" : U[user];
   await db.query("select set_config('request.jwt.claim.sub', $1, false)", [uid]);
+  await db.query("select set_config('request.jwt.claims', $1, false)", [user === "anon" ? "" : JSON.stringify({ sub: uid, aal })]);
   await db.exec(`set role ${role}`);
   try {
     return await db.query(sql, params);
@@ -114,6 +122,12 @@ const A = (await expectOk("admin creates restaurant A", () => as("admin", "inser
 const B = (await expectOk("admin creates restaurant B", () => as("admin", "insert into public.restaurants (slug, name) values ('lahore-bites', 'Lahore Bites') returning id")))?.rows[0].id;
 await expectOk("outsider sees no restaurants", () => as("outsider", "select * from public.restaurants"), rows(0));
 
+console.log("\n-- two-factor sign-in --");
+await expectOk("password-only admin still sees own admin row (the app then asks for the code)", () => as("admin-password-only", "select * from public.platform_admins"), rows(1));
+await expectOk("password-only admin sees no restaurants", () => as("admin-password-only", "select * from public.restaurants"), rows(0));
+await expectErr("password-only admin cannot create a restaurant", () => as("admin-password-only", "insert into public.restaurants (slug, name) values ('sneaky', 'Sneaky')"), /row-level security/);
+await expectOk("password-only admin cannot rename a restaurant (0 rows)", () => as("admin-password-only", "update public.restaurants set name = 'hijacked' where id = $1", [A]), affected(0));
+
 console.log("\n-- menu content --");
 const catA = (await as("admin", "insert into public.menu_categories (restaurant_id, name) values ($1, 'BBQ') returning id", [A])).rows[0].id;
 const catB = (await as("admin", "insert into public.menu_categories (restaurant_id, name) values ($1, 'Mains') returning id", [B])).rows[0].id;
@@ -133,6 +147,7 @@ await expectErr("publish refuses file not yet checked", () => as("admin", "selec
 await as("admin", "update public.assets set status = 'ready', byte_size = 1049552 where id = $1", [glb]);
 await expectErr("publish refuses file not copied to public bucket", () => as("admin", "select public.publish_menu($1)", [A]), /not been copied to the public bucket/);
 await as("admin", "update public.assets set public_key = storage_key where id = $1", [glb]);
+await expectErr("password-only admin cannot publish", () => as("admin-password-only", "select public.publish_menu($1)", [A]), /Not allowed/);
 await expectOk("publish succeeds once everything is ready", () => as("admin", "select * from public.publish_menu($1)", [A]), (r) => r.rows[0].snapshot.version === 1);
 
 console.log("\n-- what customers see --");
@@ -172,10 +187,12 @@ await expectOk("outsider sees no admin rows", () => as("outsider", "select * fro
 
 console.log("\n-- unpublishing --");
 await expectOk("outsider cannot unpublish A (0 rows)", () => as("outsider", "delete from public.published_menus where restaurant_id = $1", [A]), affected(0));
+await expectOk("password-only admin cannot unpublish A (0 rows)", () => as("admin-password-only", "delete from public.published_menus where restaurant_id = $1", [A]), affected(0));
 await expectOk("editor unpublishes A", () => as("editor", "delete from public.published_menus where restaurant_id = $1", [A]), affected(1));
 await expectOk("anon no longer sees A", () => as("anon", "select * from public.published_menus"), rows(0));
 await expectOk("history kept for rollback", () => as("admin", "select version from public.menu_versions where restaurant_id = $1 order by version", [A]), rows(3));
 await expectOk("updated_at moves on edit", () => as("admin", "select updated_at > created_at as moved from public.menu_items where id = $1", [item]), (r) => r.rows[0].moved === true);
+await expectOk("password-only admin cannot delete a restaurant (0 rows)", () => as("admin-password-only", "delete from public.restaurants where id = $1", [A]), affected(0));
 await expectOk("deleting a restaurant cascades cleanly", () => as("admin", "delete from public.restaurants where id = $1", [A]), affected(1));
 
 console.log(`\n${pass} passed, ${fail} failed`);
